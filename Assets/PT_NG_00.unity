@@ -702,7 +702,7 @@ GameObject:
   - component: {fileID: 1946820242}
   m_Layer: 0
   m_Name: Spawner God
-  m_TagString: Untagged
+  m_TagString: SpawnerGod
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -722,6 +722,10 @@ MonoBehaviour:
   - {fileID: 1458235880929826, guid: 1e6ff109789d1fb48a7219628ddf96cf, type: 2}
   - {fileID: 1859499268704380, guid: 3b7218f7f100ea3489f6ef1cf5019610, type: 2}
   ObstacleSpeed: 10
+  Direction: {x: 1, y: 0, z: 0}
+  SpawnRateRange: {x: 0.75, y: 3.5}
+  MoreOverTime: 1
+  MinSpawnRate: 1.85
 --- !u!4 &1946820243
 Transform:
   m_ObjectHideFlags: 0

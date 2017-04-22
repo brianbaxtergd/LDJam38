@@ -8,11 +8,10 @@ public class ObstacleBehavior : MonoBehaviour
 	[SerializeField]
 	float DestoryPoint = 6.0f;//Positive is behind player
 
-	public void Go(float speed)
+	public void Go(float speed, Vector3 direction)
 	{
 		RB = GetComponent<Rigidbody>();
-		Vector3 vel = Vector3.zero;
-		vel.x = speed;
+		Vector3 vel = direction * speed;
 		RB.velocity = vel;
 	}
 
