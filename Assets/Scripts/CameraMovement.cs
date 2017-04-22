@@ -8,22 +8,26 @@ public class CameraMovement : MonoBehaviour
     GameObject playerObj;
     [SerializeField]
     float orbitAngle;
-    [SerializeField]
-    float rotationSmoothness;
+    //[SerializeField]
+    //float rotationSmoothness;
     [SerializeField]
     float offsetAngleXAxis;
-
+    [SerializeField]
+    float followSmoothness;
+    [SerializeField]
     float orbitDist;
-    float speedDiv;
+    [SerializeField]
+    float followDistZ;
+    [SerializeField]
+    float followDistZMin;
+    [SerializeField]
+    float followDistzMax;
 
     Transform cylinderTrans;
 
     // Private interface.
     void Start ()
     {
-        orbitDist = 4;
-        speedDiv = 12;
-
         cylinderTrans = GameObject.Find("Cylinder").gameObject.transform;
 	}
 	
@@ -33,27 +37,23 @@ public class CameraMovement : MonoBehaviour
         float angleDelta = Vector3.Angle(
             new Vector3(0, 0, orbitAngle),
             new Vector3(0, 0, playerObj.GetComponent<PlayerMovement>().GetOrbitAngle()));
-        float orbitSpeed = angleDelta / speedDiv;
+        float orbitSpeed = angleDelta / followSmoothness;
 
         if (Mathf.Abs(angleDelta) > 0.2)
             orbitAngle = WrapValue(orbitAngle + orbitSpeed, 360);
         else
             orbitAngle = playerObj.GetComponent<PlayerMovement>().GetOrbitAngle();
 
-        Vector3 t = transform.position;
-        t = new Vector3(
+        transform.position = new Vector3(
             cylinderTrans.position.x + lengthdir_x(orbitDist, orbitAngle),
             cylinderTrans.position.y + lengthdir_y(orbitDist, orbitAngle),
-            t.z);
-        transform.position = t;
+            transform.position.z);
 
         // Update orientation.
-        Quaternion rotCur = transform.rotation;
-        Quaternion rotTar = Quaternion.LookRotation(
-            new Vector3(0, 0, 1),
-            new Vector3(0, playerObj.transform.position.y - cylinderTrans.position.y, 0));
-        Quaternion rTar = Quaternion.Euler(rotTar.x, rotTar.y, rotTar.z);
-        transform.rotation = Quaternion.Slerp(transform.rotation, rTar, Time.deltaTime * rotationSmoothness);
+        transform.rotation = Quaternion.Euler(
+            transform.rotation.x, // Todo. Angle x-axis rot downward toward pipe's center or player's position.
+            transform.rotation.y, 
+            WrapValue(orbitAngle - 90, 360));
 	}
 
     // Public interface.

@@ -69,6 +69,11 @@ public class PlayerMovement : MonoBehaviour
 	}
 
     // Public interface.
+    public float GetOrbitDist()
+    {
+        return orbitDist;
+    }
+
     public float GetOrbitAngle()
     {
         return orbitAngle;
