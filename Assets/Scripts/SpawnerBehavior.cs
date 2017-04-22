@@ -4,8 +4,9 @@ using UnityEngine;
 
 public class SpawnerBehavior : MonoBehaviour 
 {
-	public void SpawnObstacle(GameObject obj)
+	public void SpawnObstacle(GameObject obj, float speed)
 	{
-		Instantiate(obj, transform);
+		GameObject instobj = Instantiate(obj, transform);
+		instobj.GetComponent<ObstacleBehavior>().Go(speed);
 	}
 }

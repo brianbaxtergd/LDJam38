@@ -5,16 +5,14 @@ using UnityEngine;
 public class ObstacleBehavior : MonoBehaviour 
 {
 	Rigidbody RB;
-	[SerializeField, Range(1,50)]
-	float Speed = 10.0f;
-	float DestoryPoint = 6.0f;
+	[SerializeField]
+	float DestoryPoint = 6.0f;//Positive is behind player
 
-	//Or when spawned
-	void Start()
+	public void Go(float speed)
 	{
-		RB = GetComponent<Rigidbody>();//Only needed once so keep in start
+		RB = GetComponent<Rigidbody>();
 		Vector3 vel = Vector3.zero;
-		vel.x = Speed;
+		vel.x = speed;
 		RB.velocity = vel;
 	}
 

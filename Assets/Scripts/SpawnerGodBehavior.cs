@@ -5,14 +5,13 @@ using UnityEngine;
 public class SpawnerGodBehavior : MonoBehaviour 
 {
 	[SerializeField]
-	GameObject[] Obstacles;
+	GameObject[] Obstacles = null;
 
-	//This should be in spawnbehavior
-	[SerializeField]
-	float spawnRate = 1.0f;//Rate of Spawn Per Second
+	//This should be per spawner
+	float spawnRate = 1.0f;
+	float timer = 0.0f;
 
 	SpawnerBehavior[] childSpawners;
-	float timer = 0.0f;
 
 	void Start()
 	{
@@ -26,9 +25,11 @@ public class SpawnerGodBehavior : MonoBehaviour
 		{
 			foreach(var child in childSpawners)
 			{
-				child.SpawnObstacle(Obstacles[0]);
+				int obstacle = Random.Range(0, Obstacles.Length);
+				child.SpawnObstacle(Obstacles[obstacle], Random.Range(7.0f,15.0f));
 			}
 			timer = 0.0f;
+			spawnRate = Random.Range(0.75f, 3.0f);
 		}
 	}
 }
