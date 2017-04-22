@@ -14,27 +14,25 @@ public class PlayerMovement : MonoBehaviour
     float orbitAngle;
 
     float orbitSpeed;
+    float orbitDist;
 
     bool inputLeft;
     bool inputRight;
 
-    float orbitDist;
-
     Transform playerTrans;
     Transform cylinderTrans;
-
-
 
     // Private interface.
     void Start ()
     {
         inputLeft = false;
         inputRight = false;
-        orbitDist = 3;
         orbitSpeed = 0;
 
         playerTrans = GameObject.Find("Sphere").gameObject.transform;
         cylinderTrans = GameObject.Find("Cylinder").gameObject.transform;
+
+        orbitDist = cylinderTrans.localScale.x * 0.5f + transform.localScale.x * 0.5f;
     }
 	
 	void Update ()
@@ -51,6 +49,15 @@ public class PlayerMovement : MonoBehaviour
         if (inputRight)
         {
             orbitSpeed -= speedAccel;
+        }
+
+        // Apply friction when not accelerating.
+        if (!inputRight && !inputLeft)
+        {
+            if (orbitSpeed < 0)
+                orbitSpeed = Mathf.Min(orbitSpeed + speedDecel, 0);
+            else if (orbitSpeed > 0)
+                orbitSpeed = Mathf.Max(0, orbitSpeed - speedDecel);
         }
 
         // Clamp speed.

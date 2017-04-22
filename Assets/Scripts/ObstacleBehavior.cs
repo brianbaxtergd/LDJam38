@@ -7,20 +7,21 @@ public class ObstacleBehavior : MonoBehaviour
 	Rigidbody RB;
 	[SerializeField, Range(1,50)]
 	float Speed = 10.0f;
-	float DestoryPoint = 6.0f;
+    [SerializeField]
+	float DestoryPointZ;
 
 	//Or when spawned
 	void Start()
 	{
 		RB = GetComponent<Rigidbody>();//Only needed once so keep in start
 		Vector3 vel = Vector3.zero;
-		vel.x = Speed;
+		vel.z = -Speed;
 		RB.velocity = vel;
 	}
 
 	void Update()
 	{
-		if(transform.position.x > DestoryPoint)
+		if(transform.position.z < DestoryPointZ)
 		{
 			//Destory or reset
 			Destroy(gameObject);

@@ -8,20 +8,20 @@ public class CameraMovement : MonoBehaviour
     GameObject playerObj;
     [SerializeField]
     float orbitAngle;
+    [SerializeField]
+    float orbitDistOffsetPlayer;
     //[SerializeField]
     //float rotationSmoothness;
     [SerializeField]
-    float offsetAngleXAxis;
-    [SerializeField]
     float followSmoothness;
-    [SerializeField]
-    float orbitDist;
     [SerializeField]
     float followDistZ;
     [SerializeField]
     float followDistZMin;
     [SerializeField]
     float followDistzMax;
+
+    float orbitDist; // Scales automatically with xScale component of pipe localScale Vec3.
 
     Transform cylinderTrans;
 
@@ -33,6 +33,9 @@ public class CameraMovement : MonoBehaviour
 	
 	void Update ()
     {
+        // Update orbit distance.
+        orbitDist = playerObj.GetComponent<PlayerMovement>().GetOrbitDist() + orbitDistOffsetPlayer;
+
         // Update position.
         float angleDelta = Vector3.Angle(
             new Vector3(0, 0, orbitAngle),
@@ -47,14 +50,21 @@ public class CameraMovement : MonoBehaviour
         transform.position = new Vector3(
             cylinderTrans.position.x + lengthdir_x(orbitDist, orbitAngle),
             cylinderTrans.position.y + lengthdir_y(orbitDist, orbitAngle),
-            transform.position.z);
+            followDistZ/*transform.position.z*/);
 
         // Update orientation.
         transform.rotation = Quaternion.Euler(
             transform.rotation.x, // Todo. Angle x-axis rot downward toward pipe's center or player's position.
             transform.rotation.y, 
             WrapValue(orbitAngle - 90, 360));
-	}
+        // Attempts at updating orientation with x-axis offset 10 degrees toward pipe center.
+        /*
+        transform.rotation = Quaternion.Euler(
+            transform.position.x - playerObj.transform.position.x, // Todo. Angle x-axis rot downward toward pipe's center or player's position.
+            transform.position.y - playerObj.transform.position.y,
+            WrapValue(orbitAngle - 90, 360));
+        */
+    }
 
     // Public interface.
     float WrapValue(float _val, float _wrapAmt)
