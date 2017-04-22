@@ -10,10 +10,10 @@ public class CameraMovement : MonoBehaviour
     float orbitAngle;
     [SerializeField]
     float orbitDistOffsetPlayer;
-    //[SerializeField]
-    //float rotationSmoothness;
     [SerializeField]
-    float followSmoothness;
+    float followSmoothnessGround;
+    [SerializeField]
+    float followSmoothnessAir;
     [SerializeField]
     float followDistZ;
     [SerializeField]
@@ -24,25 +24,34 @@ public class CameraMovement : MonoBehaviour
     float orbitDist; // Scales automatically with xScale component of pipe localScale Vec3.
 
     Transform cylinderTrans;
+    Transform playerTrans;
 
     // Private interface.
     void Start ()
     {
         cylinderTrans = GameObject.Find("Cylinder").gameObject.transform;
+        playerTrans = GameObject.Find("Sphere").gameObject.transform;
 	}
 	
+    void FixedUpdate()
+    {
+
+    }
+
 	void Update ()
     {
         // Update orbit distance.
         orbitDist = playerObj.GetComponent<PlayerMovement>().GetOrbitDist() + orbitDistOffsetPlayer;
 
         // Update position.
-        float angleDelta = Vector3.Angle(
-            new Vector3(0, 0, orbitAngle),
-            new Vector3(0, 0, playerObj.GetComponent<PlayerMovement>().GetOrbitAngle()));
-        float orbitSpeed = angleDelta / followSmoothness;
+        float angleDelta = AngleDiff(playerObj.GetComponent<PlayerMovement>().GetOrbitAngle(), orbitAngle);
+        float orbitSpeed;
+        if (playerObj.GetComponent<PlayerMovement>().GetIsGrounded())
+            orbitSpeed = angleDelta / followSmoothnessGround;
+        else
+            orbitSpeed = angleDelta / followSmoothnessAir;
 
-        if (Mathf.Abs(angleDelta) > 0.2)
+        if (Mathf.Abs(angleDelta) > 1)
             orbitAngle = WrapValue(orbitAngle + orbitSpeed, 360);
         else
             orbitAngle = playerObj.GetComponent<PlayerMovement>().GetOrbitAngle();
@@ -57,13 +66,6 @@ public class CameraMovement : MonoBehaviour
             transform.rotation.x, // Todo. Angle x-axis rot downward toward pipe's center or player's position.
             transform.rotation.y, 
             WrapValue(orbitAngle - 90, 360));
-        // Attempts at updating orientation with x-axis offset 10 degrees toward pipe center.
-        /*
-        transform.rotation = Quaternion.Euler(
-            transform.position.x - playerObj.transform.position.x, // Todo. Angle x-axis rot downward toward pipe's center or player's position.
-            transform.position.y - playerObj.transform.position.y,
-            WrapValue(orbitAngle - 90, 360));
-        */
     }
 
     // Public interface.
@@ -85,5 +87,10 @@ public class CameraMovement : MonoBehaviour
     float lengthdir_y(float len, float dir)
     {
         return len * Mathf.Sin(dir * Mathf.Deg2Rad);
+    }
+
+    float AngleDiff(float _tarAng, float _curAng)
+    {
+        return ((((_tarAng - _curAng) % 360) + 540) % 360) - 180;
     }
 }

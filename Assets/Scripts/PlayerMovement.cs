@@ -12,9 +12,22 @@ public class PlayerMovement : MonoBehaviour
     float speedDecel;
     [SerializeField]
     float orbitAngle;
+    [SerializeField]
+    float velYMax;
+    [SerializeField]
+    float velYMin;
+    [SerializeField]
+    float velYJump;
+    [SerializeField]
+    float velYGravityHi;
+    [SerializeField]
+    float velYGravityLo;
+
+    float velY;
 
     float orbitSpeed;
     float orbitDist;
+    float orbitDistMin;
 
     bool inputLeft;
     bool inputRight;
@@ -33,15 +46,22 @@ public class PlayerMovement : MonoBehaviour
         cylinderTrans = GameObject.Find("Cylinder").gameObject.transform;
 
         orbitDist = cylinderTrans.localScale.x * 0.5f + transform.localScale.x * 0.5f;
+        orbitDistMin = orbitDist;
+
+        velY = 0;
     }
 	
+    void FixedUpdate()
+    { 
+    }
+
 	void Update ()
     {
-        // Check for user input.
-        inputLeft = Input.GetMouseButton(0);
-        inputRight = Input.GetMouseButton(1);
+        // Check for movement input.
+        inputLeft = Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow);
+        inputRight = Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow);
 
-        // React to input.
+        // React to movement input.
         if (inputLeft)
         {
             orbitSpeed += speedAccel;
@@ -66,6 +86,36 @@ public class PlayerMovement : MonoBehaviour
         // Update orbit angle.
         orbitAngle = WrapValue(orbitAngle + orbitSpeed, 360);
 
+        // Check for jump input.
+        bool inputJumpPressed = Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0);
+        bool inputJumpHold = Input.GetKey(KeyCode.Space) || Input.GetMouseButton(0);
+
+        // React to jump input.
+        if (GetIsGrounded())
+        {
+            if (inputJumpPressed)
+            {
+                // Add vertical velocity.
+                velY += velYJump;
+            }
+        }
+        else
+        {
+            // Apply gravity if player is floating.
+            if (inputJumpHold)
+                velY -= velYGravityLo;
+            else
+                velY -= velYGravityHi;
+        }
+        velY = Mathf.Clamp(velY, velYMin, velYMax);
+        orbitDist = Mathf.Clamp(orbitDist + velY, orbitDistMin, 1000);
+        if (orbitDist == orbitDistMin)
+        {
+            // Kill velY on landing.
+            if (velY != 0)
+                velY = 0;
+        }
+
         // Update player position.
         Vector3 t = playerTrans.position;
         t = new Vector3(
@@ -76,6 +126,14 @@ public class PlayerMovement : MonoBehaviour
 	}
 
     // Public interface.
+    public bool GetIsGrounded()
+    {
+        if (Mathf.Abs(orbitDist - orbitDistMin) <= 0.05)
+            return true;
+        else
+            return false;
+    }
+
     public float GetOrbitDist()
     {
         return orbitDist;
