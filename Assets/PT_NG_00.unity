@@ -474,6 +474,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerObj: {fileID: 1844294590}
   orbitAngle: 90
+  rotationSmoothness: 2
+  offsetAngleXAxis: 10
 --- !u!1 &1844294590
 GameObject:
   m_ObjectHideFlags: 0

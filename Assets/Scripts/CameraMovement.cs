@@ -8,6 +8,10 @@ public class CameraMovement : MonoBehaviour
     GameObject playerObj;
     [SerializeField]
     float orbitAngle;
+    [SerializeField]
+    float rotationSmoothness;
+    [SerializeField]
+    float offsetAngleXAxis;
 
     float orbitDist;
     float speedDiv;
@@ -25,12 +29,12 @@ public class CameraMovement : MonoBehaviour
 	
 	void Update ()
     {
+        // Update position.
         float angleDelta = Vector3.Angle(
             new Vector3(0, 0, orbitAngle),
             new Vector3(0, 0, playerObj.GetComponent<PlayerMovement>().GetOrbitAngle()));
         float orbitSpeed = angleDelta / speedDiv;
 
-        // Update orbit angle.
         if (Mathf.Abs(angleDelta) > 0.2)
             orbitAngle = WrapValue(orbitAngle + orbitSpeed, 360);
         else
@@ -42,6 +46,14 @@ public class CameraMovement : MonoBehaviour
             cylinderTrans.position.y + lengthdir_y(orbitDist, orbitAngle),
             t.z);
         transform.position = t;
+
+        // Update orientation.
+        Quaternion rotCur = transform.rotation;
+        Quaternion rotTar = Quaternion.LookRotation(
+            new Vector3(0, 0, 1),
+            new Vector3(0, playerObj.transform.position.y - cylinderTrans.position.y, 0));
+        Quaternion rTar = Quaternion.Euler(rotTar.x, rotTar.y, rotTar.z);
+        transform.rotation = Quaternion.Slerp(transform.rotation, rTar, Time.deltaTime * rotationSmoothness);
 	}
 
     // Public interface.
