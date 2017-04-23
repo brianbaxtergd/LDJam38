@@ -38,11 +38,6 @@ public class PlayerMovement : MonoBehaviour
     bool inputJumpPressed = false;
     bool inputBoost = false;
 
-    bool canJump = true;
-    float jumpCooldownTimer = 0;
-    [SerializeField]
-    float jumpCooldownTimerMax;
-
     Transform playerTrans;
     Transform tubeTrans;
 
@@ -185,22 +180,11 @@ public class PlayerMovement : MonoBehaviour
 
     void UpdateJumpBoost()
     {
-        // Jumping cooldown.
-        if (!canJump)
-        {
-            jumpCooldownTimer = Mathf.Max(jumpCooldownTimer - Time.deltaTime, 0);
-            if (jumpCooldownTimer == 0)
-                canJump = true;
-        }
-
         // Boosting & jumping.
         if (inputBoost || inputJumpPressed)
         {
-            if (canJump && inputJumpPressed)
+            if (inputJumpPressed)
             {
-                canJump = false;
-                jumpCooldownTimer = jumpCooldownTimerMax;
-
                 if (GetIsGrounded())
                     velY = Mathf.Clamp(velY + velYJump, velYMin, velYMax);
                 else
@@ -208,6 +192,8 @@ public class PlayerMovement : MonoBehaviour
             }
             else if (inputBoost)
             {
+                if (velY < velYBoost * -4)
+                    velY = velYBoost * -4;
                 velY = Mathf.Clamp(velY + velYBoost, velYMin, velYMax);
             }
         }

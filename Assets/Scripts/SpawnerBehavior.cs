@@ -6,6 +6,12 @@ public class SpawnerBehavior : MonoBehaviour
 {
 	public void SpawnObstacle(GameObject obj)
 	{
-		Instantiate(obj, transform);
+        float newZ = (float)Random.Range(0, 359);
+		//Instantiate(obj, transform);
+        Instantiate(
+            obj, 
+            transform.position, 
+            Quaternion.Euler(0, 0, newZ), 
+            gameObject.transform);
 	}
 }
