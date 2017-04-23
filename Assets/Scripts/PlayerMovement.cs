@@ -17,6 +17,8 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     float velYMin;
     [SerializeField]
+    float velYResetMult; // Multiplied to velYBoost to clamp negative velocity before boost/jump.
+    [SerializeField]
     float velYJump;
     [SerializeField]
     float velYBoost;
@@ -60,7 +62,7 @@ public class PlayerMovement : MonoBehaviour
     }
 	
     void FixedUpdate()
-    { 
+    {
     }
 
 	void Update ()
@@ -86,6 +88,16 @@ public class PlayerMovement : MonoBehaviour
     public float GetOrbitDist()
     {
         return orbitDist;
+    }
+
+    public float GetOrbitDistMax()
+    {
+        return orbitDistMax;
+    }
+
+    public float GetOrbitDistMin()
+    {
+        return orbitDistMin;
     }
 
     public float GetOrbitAngle()
@@ -192,14 +204,14 @@ public class PlayerMovement : MonoBehaviour
             }
             else if (inputBoost)
             {
-                if (velY < velYBoost * -4)
-                    velY = velYBoost * -4;
+                if (velY < velYBoost * velYResetMult)
+                    velY = velYBoost * velYResetMult;
                 velY = Mathf.Clamp(velY + velYBoost, velYMin, velYMax);
             }
         }
         else
         {
-            velY = Mathf.Clamp(velY - velYGravityLo, velYMin, velYMax);
+            velY = Mathf.Clamp(velY - velYGravityHi, velYMin, velYMax);
         }
 
         // Clamp velocity & apply to orbit distance (relative height).
@@ -221,11 +233,5 @@ public class PlayerMovement : MonoBehaviour
             tubeTrans.position.x + lengthdir_x(orbitDist, orbitAngle),
             tubeTrans.position.y + lengthdir_y(orbitDist, orbitAngle),
             playerTrans.position.z);
-        /*Vector3 t = playerTrans.position;
-        t = new Vector3(
-            tubeTrans.position.x + lengthdir_x(orbitDist, orbitAngle),
-            tubeTrans.position.y + lengthdir_y(orbitDist, orbitAngle),
-            t.z);
-        playerTrans.position = t;*/
     }
 }

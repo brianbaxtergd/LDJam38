@@ -11,6 +11,8 @@ public class CameraMovement : MonoBehaviour
     [SerializeField]
     float orbitDistOffsetPlayer;
     [SerializeField]
+    float orbitDistSmoothness; // Used to divide delta between player orbitDist & camera orbitDist.
+    [SerializeField]
     float followSmoothnessGround;
     [SerializeField]
     float followSmoothnessAir;
@@ -19,9 +21,12 @@ public class CameraMovement : MonoBehaviour
     [SerializeField]
     float followDistZMin;
     [SerializeField]
-    float followDistzMax;
+    float followDistZMax;
 
     float orbitDist; // Scales automatically with xScale component of pipe localScale Vec3.
+    float orbitDistTar;
+    float orbitDistMin;
+    float orbitDistMax;
 
     Transform tubeTrans;
     Transform playerTrans;
@@ -40,8 +45,17 @@ public class CameraMovement : MonoBehaviour
 
 	void Update ()
     {
+        // Update orbit distance min & max, contingent on player values.
+        orbitDistMin = playerObj.GetComponent<PlayerMovement>().GetOrbitDistMin() + orbitDistOffsetPlayer;
+        orbitDistMax = playerObj.GetComponent<PlayerMovement>().GetOrbitDistMax() - orbitDistOffsetPlayer * 0.25f;
+
         // Update orbit distance.
-        orbitDist = playerObj.GetComponent<PlayerMovement>().GetOrbitDist() + orbitDistOffsetPlayer;
+        orbitDistTar = Mathf.Clamp(
+            playerObj.GetComponent<PlayerMovement>().GetOrbitDist() + orbitDistOffsetPlayer, 
+            orbitDistMin, 
+            orbitDistMax);
+        float delta = orbitDistTar - orbitDist;
+        orbitDist = Mathf.Clamp(orbitDist + delta / orbitDistSmoothness, orbitDistMin, orbitDistMax);
 
         // Update position.
         float angleDelta = AngleDiff(playerObj.GetComponent<PlayerMovement>().GetOrbitAngle(), orbitAngle);
