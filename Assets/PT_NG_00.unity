@@ -788,9 +788,10 @@ MonoBehaviour:
   - {fileID: 1859499268704380, guid: 3b7218f7f100ea3489f6ef1cf5019610, type: 2}
   ObstacleSpeed: 10
   Direction: {x: 0, y: 0, z: 1}
-  SpawnRateRange: {x: 0.9, y: 3.95}
+  SpawnRateRange: {x: 1.32, y: 4.01}
   MoreOverTime: 1
-  MinSpawnRate: 2.09
+  MinSpawnRate: {x: 0.65, y: 2.2}
+  NumOfAlwaysOpenSpots: 2
 --- !u!4 &1946820243
 Transform:
   m_ObjectHideFlags: 0

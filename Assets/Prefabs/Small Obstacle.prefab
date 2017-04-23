@@ -121,4 +121,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e8371be9ca1bba4c87504218c8c45d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DestoryDistance: 25
+  DestoryDistance: 50

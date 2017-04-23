@@ -11,17 +11,20 @@ public class SpawnerGodBehavior : MonoBehaviour
 	[SerializeField]
 	Vector3 Direction = Vector3.zero;
 	[SerializeField]
+	//x is min y is max
 	Vector2 SpawnRateRange = Vector2.zero;
 	[SerializeField]
-	bool MoreOverTime = false;
+	bool MoreOverTime = false;//the longer time goes the more obstacles spawn
 	[SerializeField]
-	float MinSpawnRate = 2.5f;
+	Vector2 MinSpawnRate = Vector2.zero;//the minimum spawn rate
+	[SerializeField]
+	int NumOfAlwaysOpenSpots = 2;
 
 
 	float[] SpawnRates = null;
 	float[] Timers = null;
 
-	SpawnerBehavior[] childSpawners;
+	SpawnerBehavior[] childSpawners = null;
 
 
 	void Start()
@@ -38,20 +41,38 @@ public class SpawnerGodBehavior : MonoBehaviour
 
 	void Update ()
 	{
-		if(MoreOverTime && SpawnRateRange.y > MinSpawnRate)
+		if(MoreOverTime)
 		{
-			SpawnRateRange.y -= Time.deltaTime * 0.01f;
+			if(SpawnRateRange.y >= MinSpawnRate.y)
+				SpawnRateRange.y -= Time.deltaTime * 0.01f;
+			if(SpawnRateRange.x >= MinSpawnRate.x)
+				SpawnRateRange.x -= Time.deltaTime * 0.0065f;
 		}
+		int currNumOpen = 0;
 		for(int i = 0; i < Timers.Length; ++ i)
 		{
 			Timers[i] += Time.deltaTime;
 			if(Timers[i] > SpawnRates[i])
 			{
+				if(currNumOpen < NumOfAlwaysOpenSpots)
+				{
+					Timers[(i + 1) % Timers.Length] -= SpawnRateRange.x * 0.75f;
+					++currNumOpen;
+				}
 				int obstacle = Random.Range(0, Obstacles.Length);
 				childSpawners[i].SpawnObstacle(Obstacles[obstacle], ObstacleSpeed, Direction);
 				Timers[i] = 0.0f;
 				SpawnRates[i] = Random.Range(SpawnRateRange.x, SpawnRateRange.y);
 			}
 		}
+	}
+
+	public void SetOpenSpots(int spots)
+	{
+		NumOfAlwaysOpenSpots = spots;
+	}
+	public void SetObstacleSpeed(float speed)
+	{
+		ObstacleSpeed = speed;
 	}
 }
