@@ -5,14 +5,27 @@ using UnityEngine;
 public class SpawnerGodBehavior : MonoBehaviour 
 {
 	[SerializeField]
+	SpawnerBehavior[] InnerOuterSpawns = null;
+	[SerializeField]
+	float AngleDiff = 40.0f;
+	[SerializeField]
 	GameObject[] Obstacles = null;
+	[SerializeField]
+	GameObject[] Rings = null;
+	[SerializeField]
+	float RingSpawnRate = 6.0f;
+	[SerializeField]
+	GameObject[] PowerUps = null;
+	[SerializeField]
+	float PercentageOfPowerUp = 35.0f;
+	[SerializeField]
+	GameObject Hole = null;
 	[SerializeField]
 	float ObstacleSpeed = 10.0f;
 	[SerializeField]
 	Vector3 Direction = Vector3.zero;
 	[SerializeField]
-	//x is min y is max
-	Vector2 SpawnRateRange = Vector2.zero;
+	Vector2 SpawnRateRange = Vector2.zero;//x is min y is max
 	[SerializeField]
 	bool MoreOverTime = false;//the longer time goes the more obstacles spawn
 	[SerializeField]
@@ -20,22 +33,24 @@ public class SpawnerGodBehavior : MonoBehaviour
 	[SerializeField]
 	int NumOfAlwaysOpenSpots = 2;
 
-
 	float[] SpawnRates = null;
 	float[] Timers = null;
-
-	SpawnerBehavior[] childSpawners = null;
-
+	float[] Angles = null;
+	float RingTimer = 0;
+	int NumOfSpawns = 0;
+	int Spawn = 0;
 
 	void Start()
 	{
-		childSpawners = GetComponentsInChildren<SpawnerBehavior>();
-		SpawnRates = new float[childSpawners.Length];
-		Timers = new float[childSpawners.Length];
-		for(int i = 0; i < childSpawners.Length; ++i)
+		NumOfSpawns = (int)(360 / AngleDiff);
+		SpawnRates = new float[NumOfSpawns];
+		Timers = new float[NumOfSpawns];
+		Angles = new float[NumOfSpawns];
+		for(int i = 0; i < NumOfSpawns; ++i)
 		{
 			Timers[i] = 0.0f;
 			SpawnRates[i] = Random.Range(SpawnRateRange.x, SpawnRateRange.y);
+			Angles[i] = i * 40;
 		}
 	}
 
@@ -48,8 +63,14 @@ public class SpawnerGodBehavior : MonoBehaviour
 			if(SpawnRateRange.x >= MinSpawnRate.x)
 				SpawnRateRange.x -= Time.deltaTime * 0.0065f;
 		}
+		SpawnRing();
+		SpawnCheck();
+	}
+
+	void SpawnCheck()
+	{
 		int currNumOpen = 0;
-		for(int i = 0; i < Timers.Length; ++ i)
+		for(int i = 0; i < NumOfSpawns; ++ i)
 		{
 			Timers[i] += Time.deltaTime;
 			if(Timers[i] > SpawnRates[i])
@@ -60,9 +81,37 @@ public class SpawnerGodBehavior : MonoBehaviour
 					++currNumOpen;
 				}
 				int obstacle = Random.Range(0, Obstacles.Length);
-				childSpawners[i].SpawnObstacle(Obstacles[obstacle], ObstacleSpeed, Direction);
+				float isPowerup = Random.Range(0.0f, 100.0f);
+				transform.rotation = Quaternion.Euler(0,0,Angles[i]);
+				if(PowerUps.Length > 0 && isPowerup <= PercentageOfPowerUp)
+				{
+					int power = Random.Range(0, PowerUps.Length);
+					InnerOuterSpawns[Spawn].SpawnObstacle(PowerUps[power], ObstacleSpeed, Direction);
+				}
+				else
+					InnerOuterSpawns[Spawn].SpawnObstacle(Obstacles[obstacle], ObstacleSpeed, Direction);
 				Timers[i] = 0.0f;
 				SpawnRates[i] = Random.Range(SpawnRateRange.x, SpawnRateRange.y);
+			}
+		}
+	}
+
+	void SpawnRing()
+	{
+		if(Rings.Length > 0)
+		{
+			RingTimer += Time.deltaTime;
+			if(RingTimer >= RingSpawnRate)
+			{
+				for(int i = 0; i < NumOfSpawns; ++i)
+				{
+					Timers[i] -= 0.45f;
+				}
+				transform.rotation = Quaternion.Euler(0,0,0);
+				int ring = Random.Range(0, Rings.Length);
+				GameObject NewRing = Instantiate(Rings[ring], transform);
+				NewRing.transform.SetParent(null);
+				NewRing.GetComponent<ObstacleBehavior>().Go(ObstacleSpeed, Direction);
 			}
 		}
 	}
@@ -71,8 +120,20 @@ public class SpawnerGodBehavior : MonoBehaviour
 	{
 		NumOfAlwaysOpenSpots = spots;
 	}
+
 	public void SetObstacleSpeed(float speed)
 	{
 		ObstacleSpeed = speed;
+	}
+
+	public void SetRingSpawnRate(float rate)
+	{
+		RingSpawnRate = rate;
+	}
+
+	//0 is inner 1 is outer
+	public void SetIOState(int state)
+	{
+		Spawn = state;
 	}
 }
