@@ -23,13 +23,13 @@ public class CameraMovement : MonoBehaviour
 
     float orbitDist; // Scales automatically with xScale component of pipe localScale Vec3.
 
-    Transform cylinderTrans;
+    Transform tubeTrans;
     Transform playerTrans;
 
     // Private interface.
     void Start ()
     {
-        cylinderTrans = GameObject.Find("Cylinder").gameObject.transform;
+        tubeTrans = GameObject.Find("Tube").gameObject.transform;
         playerTrans = GameObject.Find("Sphere").gameObject.transform;
 	}
 	
@@ -57,8 +57,8 @@ public class CameraMovement : MonoBehaviour
             orbitAngle = playerObj.GetComponent<PlayerMovement>().GetOrbitAngle();
 
         transform.position = new Vector3(
-            cylinderTrans.position.x + lengthdir_x(orbitDist, orbitAngle),
-            cylinderTrans.position.y + lengthdir_y(orbitDist, orbitAngle),
+            tubeTrans.position.x + lengthdir_x(orbitDist, orbitAngle),
+            tubeTrans.position.y + lengthdir_y(orbitDist, orbitAngle),
             followDistZ/*transform.position.z*/);
 
         // Update orientation.

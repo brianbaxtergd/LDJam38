@@ -33,7 +33,7 @@ public class PlayerMovement : MonoBehaviour
     bool inputRight;
 
     Transform playerTrans;
-    Transform cylinderTrans;
+    Transform tubeTrans;
 
     // Private interface.
     void Start ()
@@ -43,9 +43,9 @@ public class PlayerMovement : MonoBehaviour
         orbitSpeed = 0;
 
         playerTrans = GameObject.Find("Sphere").gameObject.transform;
-        cylinderTrans = GameObject.Find("Cylinder").gameObject.transform;
+        tubeTrans = GameObject.Find("Tube").gameObject.transform;
 
-        orbitDist = cylinderTrans.localScale.x * 0.5f + transform.localScale.x * 0.5f;
+        orbitDist = tubeTrans.localScale.x * 0.05f * 0.5f + transform.localScale.x * 0.5f;
         orbitDistMin = orbitDist;
 
         velY = 0;
@@ -119,8 +119,8 @@ public class PlayerMovement : MonoBehaviour
         // Update player position.
         Vector3 t = playerTrans.position;
         t = new Vector3(
-            cylinderTrans.position.x + lengthdir_x(orbitDist, orbitAngle),
-            cylinderTrans.position.y + lengthdir_y(orbitDist, orbitAngle),
+            tubeTrans.position.x + lengthdir_x(orbitDist, orbitAngle),
+            tubeTrans.position.y + lengthdir_y(orbitDist, orbitAngle),
             t.z);
         playerTrans.position = t;
 	}
