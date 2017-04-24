@@ -312,7 +312,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1502380210}
   m_LocalRotation: {x: -0.000121628866, y: 0.99631965, z: -0.0857048, w: -0.0014136136}
-  m_LocalPosition: {x: 0.34881675, y: 5.009734, z: 8.191412}
+  m_LocalPosition: {x: 0.351, y: 1.453, z: 8.808}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -490,6 +490,7 @@ MonoBehaviour:
   NumOfAlwaysOpenSpots: 2
   PatternMinMaxRate: {x: 10, y: 15}
   Rings: []
+  FullRing: {fileID: 0}
   RingSpawnRate: 6
   PowerUps:
   - {fileID: 1136141614470502, guid: afff1790d7cfef14884ac7ecf28044fe, type: 2}

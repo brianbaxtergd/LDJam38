@@ -26,6 +26,29 @@ public class SpawnerGodBehavior : MonoBehaviour
 	Vector2 PatternMinMaxRate = Vector2.zero;
 	[SerializeField]
 	GameObject[] Rings = null;
+
+	/*[SerializeField]
+	GameObject FullBottomRing = null;
+	[SerializeField]
+	GameObject FullBottomQuarterRTRing = null;
+	[SerializeField]
+	GameObject FullBottomQuarterRBRing = null;
+	[SerializeField]
+	GameObject FullBottomQuarterLBRing = null;
+	[SerializeField]
+	GameObject FullBottomQuarterLTRing = null;
+	[SerializeField]
+	GameObject FullBottomRightHalfRing = null;
+	[SerializeField]
+	GameObject FullBottomLeftHalfRing = null;
+	[SerializeField]
+	GameObject FullBottomTopHalfRing = null;
+	[SerializeField]
+	GameObject FullBottomBottomHalfRing = null;*/
+
+	[SerializeField]
+	GameObject FullRing = null;
+
 	[SerializeField]
 	float RingSpawnRate = 6.0f;
 	[SerializeField]
@@ -46,6 +69,7 @@ public class SpawnerGodBehavior : MonoBehaviour
 	float PatternTimer = 0;
 
 	bool doingPattern = false;
+	bool doSpawning = false;
 
 	void Start()
 	{
@@ -63,6 +87,8 @@ public class SpawnerGodBehavior : MonoBehaviour
 
 	void Update ()
 	{
+		if(!doSpawning)
+			return;
 		if(doingPattern)
 			return;
 		if(MoreOverTime)
@@ -165,6 +191,13 @@ public class SpawnerGodBehavior : MonoBehaviour
 		doingPattern = false;
 	}
 
+	IEnumerator PauseSpawning(float time)
+	{
+		doSpawning = false;
+		yield return new WaitForSeconds(time);
+		doSpawning = true;
+	}
+
 	public void SetOpenSpots(int spots)
 	{
 		NumOfAlwaysOpenSpots = spots;
@@ -175,6 +208,16 @@ public class SpawnerGodBehavior : MonoBehaviour
 		ObstacleSpeed = speed;
 	}
 
+	public void SetPowerUpPercentage(float ratio)
+	{
+		PercentageOfPowerUp = ratio;
+	}
+
+	public void SetObstacleSpawnRate(Vector2 minMax)
+	{
+		SpawnRateRange = minMax;
+	}
+
 	public void SetRingSpawnRate(float rate)
 	{
 		RingSpawnRate = rate;
@@ -183,5 +226,39 @@ public class SpawnerGodBehavior : MonoBehaviour
 	public void SetIOState(int state)
 	{
 		Spawn = state;
+	}
+
+	public void StartSpawning()
+	{
+		doSpawning = true;	
+	}
+
+	public void ForceSpawnHole(float angleInDeg)
+	{
+		transform.rotation = Quaternion.Euler(0, 0, angleInDeg);
+		if(Hole)
+		{
+			GameObject NewHole = Instantiate(Hole, transform);
+			NewHole.transform.SetParent(null);
+			NewHole.GetComponent<ObstacleBehavior>().Go(ObstacleSpeed, Direction);
+		}
+	}
+
+	public void ForceSpawnFullRing()
+	{
+		GameObject NewRing = Instantiate(FullRing, transform);
+		NewRing.transform.SetParent(null);
+		NewRing.GetComponent<ObstacleBehavior>().Go(ObstacleSpeed, Direction);
+	}
+
+	//For Stoping use -1
+	public void Pause(float time)
+	{
+		if(time == -1)
+		{
+			doSpawning = false;
+			return;
+		}
+		StartCoroutine(PauseSpawning(time));
 	}
 }
