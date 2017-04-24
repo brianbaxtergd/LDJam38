@@ -16,20 +16,23 @@ public class GameController : MonoBehaviour
     gameStates state = gameStates.MAIN_MENU;
 
     [SerializeField]
-    int level = 0;
+    int level;
     [SerializeField]
     int levelMax;
-    [SerializeField]
-    float breakTimerMax;
-    float breakTimer = 0;
-    [SerializeField]
-    float levelTimerMax;
-    float levelTimer = 0;
     [SerializeField]
     float obstacleSpeedMin;
     [SerializeField]
     float obstacleSpeedMax;
     float obstacleSpeed;
+    [SerializeField]
+    float barCountBreak;
+    [SerializeField]
+    float barCountLevel;
+
+    float breakTimerMax;
+    float breakTimer = 0;
+    float levelTimerMax;
+    float levelTimer = 0;
 
     float highScoreLevel;
 
@@ -64,7 +67,7 @@ public class GameController : MonoBehaviour
 
         audSrcMenuMusic = GameObject.Find("MenuMusicAudio").GetComponent<AudioSource>();
         audSrcBreakMusic = GameObject.Find("BreakMusicAudio").GetComponent<AudioSource>();
-        audSrcLevelMusic = new AudioSource[10];
+        audSrcLevelMusic = new AudioSource[levelMax];
         audSrcLevelMusic[0] = GameObject.Find("LevelMusicLayer00Audio").GetComponent<AudioSource>();
         audSrcLevelMusic[1] = GameObject.Find("LevelMusicLayer00Audio").GetComponent<AudioSource>();
         audSrcLevelMusic[2] = GameObject.Find("LevelMusicLayer00Audio").GetComponent<AudioSource>();
@@ -73,11 +76,11 @@ public class GameController : MonoBehaviour
         audSrcLevelMusic[5] = GameObject.Find("LevelMusicLayer00Audio").GetComponent<AudioSource>();
         audSrcLevelMusic[6] = GameObject.Find("LevelMusicLayer00Audio").GetComponent<AudioSource>();
         audSrcLevelMusic[7] = GameObject.Find("LevelMusicLayer00Audio").GetComponent<AudioSource>();
-        audSrcLevelMusic[8] = GameObject.Find("LevelMusicLayer00Audio").GetComponent<AudioSource>();
-        audSrcLevelMusic[9] = GameObject.Find("LevelMusicLayer00Audio").GetComponent<AudioSource>();
 
-        breakTimerMax = audSrcBreakMusic.clip.length;
-        levelTimerMax = audSrcLevelMusic[0].clip.length;
+        breakTimerMax = audSrcBreakMusic.clip.length * barCountBreak;
+        levelTimerMax = audSrcLevelMusic[0].clip.length * barCountLevel;
+
+        SetState(state);
     }
 
     void FixedUpdate()
@@ -177,12 +180,18 @@ public class GameController : MonoBehaviour
         if (newRecord)
             newRecord = false;
 
+        // Stop all music.
+        KillAllMusic();
+
         switch (_state)
         {
             case gameStates.MAIN_MENU:
-                
+                // Play music.
+                audSrcMenuMusic.Play();
                 break;
             case gameStates.BREAK:
+                // Play music.
+                audSrcBreakMusic.Play();
                 // Increase level number.
                 if (state != gameStates.DEATH)
                     level += 1;
@@ -194,6 +203,10 @@ public class GameController : MonoBehaviour
                 levelTimer = levelTimerMax;
                 break;
             case gameStates.LEVEL:
+                // Play music layers contingent on level.
+                for (int i = 0; i < level; i++)
+                    audSrcLevelMusic[i].Play();
+                //audSrcLevelMusic[0].Play();
                 break;
             case gameStates.DEATH:
                 // Compare score with highscore, updating when greater.
@@ -211,7 +224,6 @@ public class GameController : MonoBehaviour
         // Update state data.
         state = _state;
     }
-
     // Private interface.
     void UpdateUI()
     {
@@ -263,5 +275,13 @@ public class GameController : MonoBehaviour
             inputDeathRestart = false;
             inputDeathMainMenu = false;
         }
+    }
+
+    void KillAllMusic()
+    {
+        audSrcMenuMusic.Stop();
+        audSrcBreakMusic.Stop();
+        for (int i = 0; i < audSrcLevelMusic.Length; i++)
+            audSrcLevelMusic[i].Stop();
     }
 }
