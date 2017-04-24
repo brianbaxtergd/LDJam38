@@ -442,12 +442,12 @@ Prefab:
         type: 2}
       propertyPath: InnerOuterSpawns.Array.data[0]
       value: 
-      objectReference: {fileID: 52561985}
+      objectReference: {fileID: 1081070095}
     - target: {fileID: 114687968962716180, guid: 1a871182f9e34e3418d25b0091afad2b,
         type: 2}
       propertyPath: InnerOuterSpawns.Array.data[1]
       value: 
-      objectReference: {fileID: 1081070095}
+      objectReference: {fileID: 52561985}
     - target: {fileID: 114687968962716180, guid: 1a871182f9e34e3418d25b0091afad2b,
         type: 2}
       propertyPath: Direction.z
@@ -489,6 +489,18 @@ Prefab:
       value: 
       objectReference: {fileID: 1870955653970766, guid: b7e288878a0af1e43892a24d3ddf7593,
         type: 2}
+    - target: {fileID: 4432994722364016, guid: 1a871182f9e34e3418d25b0091afad2b, type: 2}
+      propertyPath: m_LocalScale.x
+      value: 0.35
+      objectReference: {fileID: 0}
+    - target: {fileID: 4432994722364016, guid: 1a871182f9e34e3418d25b0091afad2b, type: 2}
+      propertyPath: m_LocalScale.y
+      value: 0.35
+      objectReference: {fileID: 0}
+    - target: {fileID: 4432994722364016, guid: 1a871182f9e34e3418d25b0091afad2b, type: 2}
+      propertyPath: m_LocalScale.z
+      value: 0.35
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 1a871182f9e34e3418d25b0091afad2b, type: 2}
   m_IsPrefabParent: 0
@@ -1248,7 +1260,7 @@ GameObject:
   - component: {fileID: 1844294592}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
