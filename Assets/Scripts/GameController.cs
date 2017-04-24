@@ -29,6 +29,9 @@ public class GameController : MonoBehaviour
     [SerializeField]
     float barCountLevel;
 
+	[SerializeField]
+	SpawnerGodBehavior SpawnerGod = null;
+
     float breakTimerMax;
     float breakTimer = 0;
     float levelTimerMax;
@@ -189,18 +192,24 @@ public class GameController : MonoBehaviour
                 // Play music.
                 audSrcMenuMusic.Play();
                 break;
-            case gameStates.BREAK:
+		case gameStates.BREAK:
                 // Play music.
                 audSrcBreakMusic.Play();
                 // Increase level number.
-                if (state != gameStates.DEATH)
-                    level += 1;
+				if(state != gameStates.DEATH)
+					level += 1;
                 // Increase obstacle speed.
-                float newSp = obstacleSpeedMin + ((float)level / (float)levelMax) * (obstacleSpeedMax - obstacleSpeedMin);
-                obstacleSpeed = Mathf.Clamp(newSp, obstacleSpeedMin, obstacleSpeedMax);
-                // Reset break & level timers.
-                breakTimer = breakTimerMax;
-                levelTimer = levelTimerMax;
+				float ratio = (float)level / (float)levelMax;
+				float newSp = obstacleSpeedMin + (ratio * (obstacleSpeedMax - obstacleSpeedMin));
+				obstacleSpeed = Mathf.Clamp(newSp, obstacleSpeedMin, obstacleSpeedMax);
+				SpawnerGod.SetObstacleSpeed(newSp);
+				SpawnerGod.SetObstacleSpawnRate(new Vector2(1.2f - ratio, 3.0f - ratio));
+				SpawnerGod.SetOpenSpots((int)(1 - ratio) * 4);
+				SpawnerGod.SetPowerUpPercentage(1.1f - ratio * 0.10f);
+            	    // Reset break & level timers.
+				breakTimer = breakTimerMax;
+				levelTimer = levelTimerMax;
+				SpawnerGod.Pause(breakTimer);
                 break;
             case gameStates.LEVEL:
                 // Play music layers contingent on level.
