@@ -5,23 +5,25 @@ using UnityEngine;
 public class ObstacleBehavior : MonoBehaviour 
 {
 	Rigidbody RB;
-	[SerializeField, Range(1,50)]
-	float Speed = 10.0f;
-    [SerializeField]
-	float DestoryPointZ;
+	[SerializeField]
+	float DestoryDistance = 35.0f;
 
-	//Or when spawned
-	void Start()
+	Vector3 originalPos = Vector3.zero;
+
+	public void Go(float speed, Vector3 direction)
 	{
-		RB = GetComponent<Rigidbody>();//Only needed once so keep in start
-		Vector3 vel = Vector3.zero;
-		vel.z = -Speed;
+		originalPos = transform.position;
+		if(RB == null)
+			RB = GetComponent<Rigidbody>();
+		RB.velocity = Vector3.zero;
+		Vector3 vel = direction * speed;
 		RB.velocity = vel;
 	}
 
 	void Update()
 	{
-		if(transform.position.z < DestoryPointZ)
+		Vector3 pos = transform.position - originalPos;
+		if(Vector3.Dot(pos,pos) > DestoryDistance * DestoryDistance)
 		{
 			//Destory or reset
 			Destroy(gameObject);
