@@ -75,6 +75,9 @@ public class GameController : MonoBehaviour
         audSrcLevelMusic[7] = GameObject.Find("LevelMusicLayer00Audio").GetComponent<AudioSource>();
         audSrcLevelMusic[8] = GameObject.Find("LevelMusicLayer00Audio").GetComponent<AudioSource>();
         audSrcLevelMusic[9] = GameObject.Find("LevelMusicLayer00Audio").GetComponent<AudioSource>();
+
+        breakTimerMax = audSrcBreakMusic.clip.length;
+        levelTimerMax = audSrcLevelMusic[0].clip.length;
     }
 
     void FixedUpdate()
@@ -177,6 +180,7 @@ public class GameController : MonoBehaviour
         switch (_state)
         {
             case gameStates.MAIN_MENU:
+                
                 break;
             case gameStates.BREAK:
                 // Increase level number.
