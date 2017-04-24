@@ -47,7 +47,7 @@ public class CameraMovement : MonoBehaviour
     {
         // Update orbit distance min & max, contingent on player values.
         orbitDistMin = playerObj.GetComponent<PlayerMovement>().GetOrbitDistMin() + orbitDistOffsetPlayer;
-        orbitDistMax = playerObj.GetComponent<PlayerMovement>().GetOrbitDistMax() - orbitDistOffsetPlayer * 0.25f;
+        orbitDistMax = playerObj.GetComponent<PlayerMovement>().GetOrbitDistMax() - orbitDistOffsetPlayer * 0.5f;
 
         // Update orbit distance.
         orbitDistTar = Mathf.Clamp(
