@@ -45,9 +45,18 @@ public class CameraMovement : MonoBehaviour
 
 	void Update ()
     {
+        PlayerMovement scrPM = playerObj.GetComponent<PlayerMovement>();
+
         // Update orbit distance min & max, contingent on player values.
-        orbitDistMin = playerObj.GetComponent<PlayerMovement>().GetOrbitDistMin() + orbitDistOffsetPlayer;
-        orbitDistMax = playerObj.GetComponent<PlayerMovement>().GetOrbitDistMax() - orbitDistOffsetPlayer * 0.5f;
+        //if (scrPM.GetGroundState() == PlayerMovement.groundStates.OUTER)
+        //{
+            orbitDistMin = playerObj.GetComponent<PlayerMovement>().GetOrbitDistMin() + orbitDistOffsetPlayer;
+            orbitDistMax = playerObj.GetComponent<PlayerMovement>().GetOrbitDistMax() - orbitDistOffsetPlayer * 0.5f;
+        //}
+        //else
+        //{
+
+        //}
 
         // Update orbit distance.
         orbitDistTar = Mathf.Clamp(
@@ -58,7 +67,13 @@ public class CameraMovement : MonoBehaviour
         orbitDist = Mathf.Clamp(orbitDist + delta / orbitDistSmoothness, orbitDistMin, orbitDistMax);
 
         // Update position.
-        float angleDelta = AngleDiff(playerObj.GetComponent<PlayerMovement>().GetOrbitAngle(), orbitAngle);
+        float tarAng = scrPM.GetOrbitAngle(); // ORIGINAL.
+        //if (scrPM.GetGroundState() == PlayerMovement.groundStates.INNER)
+        //    tarAng = WrapValue(tarAng + 180, 360); // Player's orbitAngle adjusted by 180 degrees.
+        float angleDelta = AngleDiff(tarAng, orbitAngle); // ORIGINAL.
+        //angleDelta = AngleDiff(playerObj.GetComponent<PlayerMovement>().GetOrbitAngle(), orbitAngle);
+
+
         float orbitSpeed;
         if (playerObj.GetComponent<PlayerMovement>().GetIsGrounded())
             orbitSpeed = angleDelta / followSmoothnessGround;
@@ -73,7 +88,7 @@ public class CameraMovement : MonoBehaviour
         transform.position = new Vector3(
             tubeTrans.position.x + lengthdir_x(orbitDist, orbitAngle),
             tubeTrans.position.y + lengthdir_y(orbitDist, orbitAngle),
-            followDistZ/*transform.position.z*/);
+            playerTrans.position.z + followDistZ);
 
         // Update orientation.
         transform.rotation = Quaternion.Euler(
@@ -83,6 +98,19 @@ public class CameraMovement : MonoBehaviour
     }
 
     // Public interface.
+
+    // Used by scr PlayerMovement to adjust camera settings on groundState transition.
+    public void SetOrbitDistOffsetPlayer(float _val)
+    {
+        orbitDistOffsetPlayer = _val;
+    }
+
+    public float GetOrbitDistOffsetPlayer()
+    {
+        return orbitDistOffsetPlayer;
+    }
+
+    // Unique interface.
     float WrapValue(float _val, float _wrapAmt)
     {
         if (_val <= 0)

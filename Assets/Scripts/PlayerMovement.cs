@@ -43,6 +43,7 @@ public class PlayerMovement : MonoBehaviour
 
     Transform playerTrans;
     Transform tubeTrans;
+    CameraMovement scrCam;
 
     public enum groundStates
     {
@@ -61,6 +62,7 @@ public class PlayerMovement : MonoBehaviour
     {
         playerTrans = GameObject.Find("Sphere").gameObject.transform;
         tubeTrans = GameObject.Find("Tube").gameObject.transform;
+        scrCam = GameObject.Find("Main Camera").gameObject.GetComponent<CameraMovement>();
 
         /*orbitDist = tubeTrans.localScale.x * 0.05f * 0.5f + transform.localScale.x * 0.5f;
         orbitDistMin = orbitDist;
@@ -296,6 +298,9 @@ public class PlayerMovement : MonoBehaviour
 
         // Accelerate player toward old ground, away from new ground.
         velY = Mathf.Clamp(velY + velYJump * 0.5f, velYMin, velYMax);
+
+        // Update camera on state-change.
+        scrCam.SetOrbitDistOffsetPlayer(scrCam.GetOrbitDistOffsetPlayer() * -1);
 
         // Update state.
         groundState = _state;
