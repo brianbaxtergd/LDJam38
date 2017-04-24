@@ -69,13 +69,13 @@ public class GameController : MonoBehaviour
         audSrcBreakMusic = GameObject.Find("BreakMusicAudio").GetComponent<AudioSource>();
         audSrcLevelMusic = new AudioSource[levelMax];
         audSrcLevelMusic[0] = GameObject.Find("LevelMusicLayer00Audio").GetComponent<AudioSource>();
-        audSrcLevelMusic[1] = GameObject.Find("LevelMusicLayer00Audio").GetComponent<AudioSource>();
-        audSrcLevelMusic[2] = GameObject.Find("LevelMusicLayer00Audio").GetComponent<AudioSource>();
-        audSrcLevelMusic[3] = GameObject.Find("LevelMusicLayer00Audio").GetComponent<AudioSource>();
-        audSrcLevelMusic[4] = GameObject.Find("LevelMusicLayer00Audio").GetComponent<AudioSource>();
-        audSrcLevelMusic[5] = GameObject.Find("LevelMusicLayer00Audio").GetComponent<AudioSource>();
-        audSrcLevelMusic[6] = GameObject.Find("LevelMusicLayer00Audio").GetComponent<AudioSource>();
-        audSrcLevelMusic[7] = GameObject.Find("LevelMusicLayer00Audio").GetComponent<AudioSource>();
+        audSrcLevelMusic[1] = GameObject.Find("LevelMusicLayer01Audio").GetComponent<AudioSource>();
+        audSrcLevelMusic[2] = GameObject.Find("LevelMusicLayer02Audio").GetComponent<AudioSource>();
+        audSrcLevelMusic[3] = GameObject.Find("LevelMusicLayer03Audio").GetComponent<AudioSource>();
+        audSrcLevelMusic[4] = GameObject.Find("LevelMusicLayer04Audio").GetComponent<AudioSource>();
+        audSrcLevelMusic[5] = GameObject.Find("LevelMusicLayer05Audio").GetComponent<AudioSource>();
+        audSrcLevelMusic[6] = GameObject.Find("LevelMusicLayer06Audio").GetComponent<AudioSource>();
+        audSrcLevelMusic[7] = GameObject.Find("LevelMusicLayer07Audio").GetComponent<AudioSource>();
 
         breakTimerMax = audSrcBreakMusic.clip.length * barCountBreak;
         levelTimerMax = audSrcLevelMusic[0].clip.length * barCountLevel;
@@ -204,9 +204,8 @@ public class GameController : MonoBehaviour
                 break;
             case gameStates.LEVEL:
                 // Play music layers contingent on level.
-                for (int i = 0; i < level; i++)
+                for (int i = 0; i < Mathf.Clamp(level, 0, audSrcLevelMusic.Length); i++)
                     audSrcLevelMusic[i].Play();
-                //audSrcLevelMusic[0].Play();
                 break;
             case gameStates.DEATH:
                 // Compare score with highscore, updating when greater.
