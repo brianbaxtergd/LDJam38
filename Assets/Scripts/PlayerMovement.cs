@@ -44,15 +44,28 @@ public class PlayerMovement : MonoBehaviour
     Transform playerTrans;
     Transform tubeTrans;
 
+    public enum groundStates
+    {
+        OUTER = 0,  // Riding along the outer-edge of the conductor-pipe.
+        INNER       // Riding along the inner-edge of the conductor-pipe.
+    }
+    groundStates groundState = groundStates.OUTER;
+    bool isChangingGroundStates = false;
+
+    float pipeRatio_full = 1.0f;  // Origin to outer-edge.
+    float pipeRatio_space = 0.84f; // Origin to inner-edge.
+    float pipeRatio_edge = 0.16f; // Inner-edge to outer-edge.
+
     // Unity interface.
     void Start ()
     {
         playerTrans = GameObject.Find("Sphere").gameObject.transform;
         tubeTrans = GameObject.Find("Tube").gameObject.transform;
 
-        orbitDist = tubeTrans.localScale.x * 0.05f * 0.5f + transform.localScale.x * 0.5f;
+        /*orbitDist = tubeTrans.localScale.x * 0.05f * 0.5f + transform.localScale.x * 0.5f;
         orbitDistMin = orbitDist;
-        orbitDistMax = orbitDistMin * 3;
+        orbitDistMax = orbitDistMin * 3;*/
+        SetYBounds(groundState);
     }
 	
     void FixedUpdate()
@@ -66,6 +79,8 @@ public class PlayerMovement : MonoBehaviour
         // React to input.
         UpdateMovement();
         UpdateJumpBoost();
+        // Check for and react to collisions.
+        CheckCollisions();
         // Update translation.
         UpdateTranslation();
 	}
@@ -73,7 +88,16 @@ public class PlayerMovement : MonoBehaviour
     // Unique interface.
     public bool GetIsGrounded()
     {
-        if (Mathf.Abs(orbitDist - orbitDistMin) <= 0.05)
+        if (isChangingGroundStates)
+            return false;
+
+        float tarDist;
+        if (groundState == groundStates.OUTER)
+            tarDist = orbitDistMin;
+        else
+            tarDist = orbitDistMax;
+
+        if (Mathf.Abs(orbitDist - tarDist) <= 0.05)
             return true;
         else
             return false;
@@ -188,17 +212,66 @@ public class PlayerMovement : MonoBehaviour
             velY = Mathf.Clamp(velY - velYGravityHi, velYMin, velYMax);
         }
 
-        // Clamp velocity & apply to orbit distance (relative height).
-        orbitDist = Mathf.Clamp(orbitDist + velY, orbitDistMin, orbitDistMax);
-
-        // Check if player has landed.
-        if (orbitDist == orbitDistMin || orbitDist == orbitDistMax)
+        if (isChangingGroundStates)
         {
-            // Kill velY on landing.
-            if (velY != 0)
-                velY = 0;
+            // Current state represents the state we're transitioning INTO, not out of.
+            switch(groundState)
+            {
+                case groundStates.OUTER: // Transition to outer-edge of pipe.
+                    orbitDist = Mathf.Min(orbitDist + velY, orbitDistMax); // Clamping the relative "ceiling" bound.
+                    if (orbitDist >= orbitDistMin)
+                        isChangingGroundStates = false;
+                    break;
+                case groundStates.INNER: // Transition to inner-edge of pipe.
+                    orbitDist = Mathf.Max(orbitDist + velY, orbitDistMin); // Clamping the relative "ceiling" bound.
+                    if (orbitDist <= orbitDistMax)
+                        isChangingGroundStates = false;
+                    break;
+                default:
+                    break;
+            }
+        }
+        else
+        {
+            // Clamp velocity & apply to orbit distance (relative height).
+            orbitDist = Mathf.Clamp(orbitDist + velY, orbitDistMin, orbitDistMax);
+
+            // Check if player has landed.
+            if (orbitDist == orbitDistMin || orbitDist == orbitDistMax)
+            {
+                // Kill velY on landing.
+                if (velY != 0)
+                    velY = 0;
+            }
+        }
+    }
+
+    void CheckCollisions()
+    {
+        // Portals.
+        GameObject portal = GameObject.Find("Portal");
+        if (portal != null)
+        {
+            bool canCollide = (Mathf.Abs(portal.transform.position.z - transform.position.z) <= 0.5); // Is the portal close enough to the player?
+            if (canCollide
+                && inputJumpDown) // <-- should this be speed based? perhaps just collision based w/o need for user input?
+            {
+                groundStates newState;
+                if (groundState == groundStates.OUTER)
+                    newState = groundStates.INNER;
+                else
+                    newState = groundStates.OUTER;
+                SetGroundState(newState);
+            }
         }
 
+        // Obstacles.
+        /*
+        */
+
+        // Power ups.
+        /*
+        */
     }
 
     void UpdateTranslation()
@@ -207,5 +280,48 @@ public class PlayerMovement : MonoBehaviour
             tubeTrans.position.x + lengthdir_x(orbitDist, orbitAngle),
             tubeTrans.position.y + lengthdir_y(orbitDist, orbitAngle),
             playerTrans.position.z);
+    }
+
+    void SetGroundState(groundStates _state)
+    {
+        // Update y-axis bounds.
+        SetYBounds(_state);
+
+        // Flip y-axis related constants.
+        velYResetMult = -velYResetMult;
+        velYJump = -velYJump;
+        velYBoost = -velYBoost;
+        velYGravityHi = -velYGravityHi;
+        velYGravityLo = -velYGravityLo;
+
+        // Accelerate player toward old ground, away from new ground.
+        velY = Mathf.Clamp(velY + velYJump * 0.5f, velYMin, velYMax);
+
+        // Update state.
+        groundState = _state;
+        isChangingGroundStates = true; // Set to false after transition, within velocity clamp-logic function(s).
+    }
+
+    public groundStates GetGroundState()
+    {
+        return groundState;
+    }
+
+    void SetYBounds(groundStates _state)
+    {
+        // Update min & max height for velY (boosting / jumping / falling / riding).
+        switch (_state)
+        {
+            case groundStates.OUTER:
+                orbitDistMin = tubeTrans.localScale.x * 0.05f * 0.5f + transform.localScale.x * 0.5f;
+                orbitDistMax = orbitDistMin * 3;
+                break;
+            case groundStates.INNER:
+                orbitDistMin = 0.25f;
+                orbitDistMax = tubeTrans.localScale.x * 0.05f * (0.5f * pipeRatio_space) - transform.localScale.x * 0.5f; // Falling thru rel-ceil inner groundState, changed tubeTrans to transform.
+                break;
+            default:
+                break;
+        }
     }
 }
