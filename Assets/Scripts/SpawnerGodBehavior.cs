@@ -54,9 +54,11 @@ public class SpawnerGodBehavior : MonoBehaviour
 
 	bool doingPattern = false;
 	bool doSpawning = true;
+	PlayerMovement player;
 
 	void Start()
 	{
+		player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerMovement>();
 		NumOfSpawns = (int)(360 / AngleDiff);
 		SpawnRates = new float[NumOfSpawns];
 		Timers = new float[NumOfSpawns];
@@ -67,6 +69,11 @@ public class SpawnerGodBehavior : MonoBehaviour
 			SpawnRates[i] = Random.Range(SpawnRateRange.x, SpawnRateRange.y);
 			Angles[i] = i * 40;
 		}
+	}
+
+	void FixedUpdate()
+	{
+		Spawn = (int)player.GetGroundState();
 	}
 
 	void Update ()
