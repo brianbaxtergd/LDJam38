@@ -57,7 +57,6 @@ public class GameController : MonoBehaviour
         textObstacleSpeed   = GameObject.Find("ObstacleSpeedText").GetComponent<Text>();
         textBreakTimer      = GameObject.Find("BreakTimerText").GetComponent<Text>();
         textLevelTimer      = GameObject.Find("LevelTimerText").GetComponent<Text>();
-
     }
 
     void FixedUpdate()
@@ -100,22 +99,6 @@ public class GameController : MonoBehaviour
 
         // Update UI.
         UpdateUI();
-
-        /*
-        switch (state)
-        {
-            case gameStates.MAIN_MENU:
-                break;
-            case gameStates.BREAK:
-                break;
-            case gameStates.LEVEL:
-                break;
-            case gameStates.DEATH:
-                break;
-            case gameStates.PAUSE:
-                break;
-        }
-        */
     }
 
     // Public interface.
@@ -125,6 +108,46 @@ public class GameController : MonoBehaviour
             return 0.0f;
         else
             return obstacleSpeed;
+    }
+
+    public float GetObstacleSpeedMin()
+    {
+        return obstacleSpeedMin;
+    }
+
+    public float GetObstacleSpeedMax()
+    {
+        return obstacleSpeedMax;
+    }
+
+    public int GetLevel()
+    {
+        return level;
+    }
+
+    public int GetLevelMax()
+    {
+        return levelMax;
+    }
+
+    public float GetBreakTimer()
+    {
+        return breakTimer;
+    }
+
+    public float GetBreakTimerMax()
+    {
+        return breakTimerMax;
+    }
+
+    public float GetLevelTimer()
+    {
+        return levelTimer;
+    }
+
+    public float GetLevelTimerMax()
+    {
+        return levelTimerMax;
     }
 
     public void SetState(gameStates _state)
@@ -142,10 +165,8 @@ public class GameController : MonoBehaviour
                 if (state != gameStates.DEATH)
                     level += 1;
                 // Increase obstacle speed.
-                float spInc = ((float)level / (float)levelMax) * (obstacleSpeedMax - obstacleSpeedMin);
-                //float newSp = obstacleSpeedMin + ((level / levelMax) * (obstacleSpeedMax - obstacleSpeedMin));
-                obstacleSpeed = obstacleSpeedMin + spInc;
-                //obstacleSpeed = Mathf.Clamp(newSp, obstacleSpeedMin, obstacleSpeedMax);
+                float newSp = obstacleSpeedMin + ((float)level / (float)levelMax) * (obstacleSpeedMax - obstacleSpeedMin);
+                obstacleSpeed = Mathf.Clamp(newSp, obstacleSpeedMin, obstacleSpeedMax);
                 // Reset break & level timers.
                 breakTimer = breakTimerMax;
                 levelTimer = levelTimerMax;
