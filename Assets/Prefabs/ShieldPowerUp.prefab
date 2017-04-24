@@ -22,10 +22,9 @@ GameObject:
   - component: {fileID: 65762982002672116}
   - component: {fileID: 54346843117252356}
   - component: {fileID: 114434256095312386}
-  - component: {fileID: 114769315432268600}
   m_Layer: 0
   m_Name: ShieldPowerUp
-  m_TagString: Untagged
+  m_TagString: Shield
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -82,14 +81,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   DestoryDistance: 35
---- !u!114 &114769315432268600
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1136141614470502}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 999adda21ec731648998644faf79d1d9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

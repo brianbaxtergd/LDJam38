@@ -7,6 +7,7 @@ TagManager:
   - Obstacle
   - SpawnerGod
   - PowerUp
+  - Shield
   layers:
   - Default
   - TransparentFX
