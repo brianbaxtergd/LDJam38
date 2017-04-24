@@ -130,7 +130,7 @@ public class SpawnerGodBehavior : MonoBehaviour
 			{
 				for(int i = 0; i < NumOfSpawns; ++i)
 				{
-					Timers[i] -= 0.45f;
+					Timers[i] -= SpawnRateRange.x * 0.5f;
 				}
 				transform.rotation = Quaternion.Euler(0,0,0);
 				int ring = Random.Range(0, Rings.Length);
