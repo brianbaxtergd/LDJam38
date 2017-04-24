@@ -182,29 +182,9 @@ public class SpawnerGodBehavior : MonoBehaviour
 		else
 			direction = 1;
 		int angle = Random.Range(0, Angles.Length - 1);
-		int fenceType = Random.Range(0, 3);
 		GameObject fence = null;
-		switch(fenceType)
-		{
-		case 0:
-			int f = Random.Range(0, EightFence.Length - 1);
-			fence = EightFence[f];
-			break;
-		case 1:
-			int fq = Random.Range(0, QuarterFence.Length - 1);
-			fence = QuarterFence[fq];
-			break;
-		case 2:
-			int fh = Random.Range(0, HalfFence.Length - 1);
-			fence = HalfFence[fh];
-			break;
-		case 3:
-			int fc = Random.Range(0, ComboFences.Length - 1);
-			fence = ComboFences[fc];
-			break;
-		default:
-			break;
-		}
+		int fc = Random.Range(0, ComboFences.Length - 1);
+		fence = ComboFences[fc];
 		for(int i = 0; i < numberOfSpawns; ++i)
 		{
 			transform.rotation = Quaternion.Euler(0, 0, Angles[angle]);

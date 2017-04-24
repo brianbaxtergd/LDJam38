@@ -347,7 +347,7 @@ Prefab:
     - target: {fileID: 114687968962716180, guid: 1a871182f9e34e3418d25b0091afad2b,
         type: 2}
       propertyPath: EightFence.Array.size
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 114687968962716180, guid: 1a871182f9e34e3418d25b0091afad2b,
         type: 2}
@@ -424,7 +424,7 @@ Prefab:
         type: 2}
       propertyPath: EightFence.Array.data[0]
       value: 
-      objectReference: {fileID: 1561298007584506, guid: c06e865ecc5a57f4eb4043b1a9e6233e,
+      objectReference: {fileID: 1714971198845412, guid: 6ada1d60d489e34478ca3771f68c0659,
         type: 2}
     - target: {fileID: 114687968962716180, guid: 1a871182f9e34e3418d25b0091afad2b,
         type: 2}
@@ -483,6 +483,12 @@ Prefab:
       propertyPath: PatternMinMaxRate.y
       value: 24.54
       objectReference: {fileID: 0}
+    - target: {fileID: 114687968962716180, guid: 1a871182f9e34e3418d25b0091afad2b,
+        type: 2}
+      propertyPath: EightFence.Array.data[1]
+      value: 
+      objectReference: {fileID: 1870955653970766, guid: b7e288878a0af1e43892a24d3ddf7593,
+        type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 1a871182f9e34e3418d25b0091afad2b, type: 2}
   m_IsPrefabParent: 0
