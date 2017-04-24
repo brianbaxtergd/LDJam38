@@ -46,13 +46,9 @@ public class GameController : MonoBehaviour
     Text textBreakTimer;
     Text textLevelTimer;
 
-    AudioSource audSrcMove;
-    AudioSource audSrcBoost;
-    AudioSource audSrcJumpUp;
-    AudioSource audSrcJumpDown;
-    AudioSource audSrcPortal;
-    AudioSource audSrcDeath;
-    AudioSource audSrcGroundColl;
+    AudioSource audSrcMenuMusic;
+    AudioSource audSrcBreakMusic;
+    AudioSource[] audSrcLevelMusic;
 
     // Unity interface.
 	void Start ()
@@ -66,13 +62,19 @@ public class GameController : MonoBehaviour
         textBreakTimer      = GameObject.Find("BreakTimerText").GetComponent<Text>();
         textLevelTimer      = GameObject.Find("LevelTimerText").GetComponent<Text>();
 
-        audSrcMove          = GameObject.Find("MovementAudio").GetComponent<AudioSource>();
-        audSrcBoost         = GameObject.Find("BoostAudio").GetComponent<AudioSource>();
-        audSrcJumpUp        = GameObject.Find("JumpUpAudio").GetComponent<AudioSource>();
-        audSrcJumpDown      = GameObject.Find("JumpDownAudio").GetComponent<AudioSource>();
-        audSrcPortal        = GameObject.Find("PortalAudio").GetComponent<AudioSource>();
-        audSrcDeath         = GameObject.Find("DeathAudio").GetComponent<AudioSource>();
-        audSrcGroundColl    = GameObject.Find("GroundCollisionAudio").GetComponent<AudioSource>();
+        audSrcMenuMusic = GameObject.Find("MenuMusicAudio").GetComponent<AudioSource>();
+        audSrcBreakMusic = GameObject.Find("BreakMusicAudio").GetComponent<AudioSource>();
+        audSrcLevelMusic = new AudioSource[10];
+        audSrcLevelMusic[0] = GameObject.Find("LevelMusicLayer00Audio").GetComponent<AudioSource>();
+        audSrcLevelMusic[1] = GameObject.Find("LevelMusicLayer00Audio").GetComponent<AudioSource>();
+        audSrcLevelMusic[2] = GameObject.Find("LevelMusicLayer00Audio").GetComponent<AudioSource>();
+        audSrcLevelMusic[3] = GameObject.Find("LevelMusicLayer00Audio").GetComponent<AudioSource>();
+        audSrcLevelMusic[4] = GameObject.Find("LevelMusicLayer00Audio").GetComponent<AudioSource>();
+        audSrcLevelMusic[5] = GameObject.Find("LevelMusicLayer00Audio").GetComponent<AudioSource>();
+        audSrcLevelMusic[6] = GameObject.Find("LevelMusicLayer00Audio").GetComponent<AudioSource>();
+        audSrcLevelMusic[7] = GameObject.Find("LevelMusicLayer00Audio").GetComponent<AudioSource>();
+        audSrcLevelMusic[8] = GameObject.Find("LevelMusicLayer00Audio").GetComponent<AudioSource>();
+        audSrcLevelMusic[9] = GameObject.Find("LevelMusicLayer00Audio").GetComponent<AudioSource>();
     }
 
     void FixedUpdate()

@@ -57,6 +57,14 @@ public class PlayerMovement : MonoBehaviour
     float pipeRatio_space = 0.84f; // Origin to inner-edge.
     float pipeRatio_edge = 0.16f; // Inner-edge to outer-edge.
 
+    AudioSource audSrcMove;
+    AudioSource audSrcBoost;
+    AudioSource audSrcJumpUp;
+    AudioSource audSrcJumpDown;
+    AudioSource audSrcPortal;
+    AudioSource audSrcDeath;
+    AudioSource audSrcGroundColl;
+
     // Unity interface.
     void Start ()
     {
@@ -64,10 +72,15 @@ public class PlayerMovement : MonoBehaviour
         tubeTrans = GameObject.Find("Tube").gameObject.transform;
         scrCam = GameObject.Find("Main Camera").gameObject.GetComponent<CameraMovement>();
 
-        /*orbitDist = tubeTrans.localScale.x * 0.05f * 0.5f + transform.localScale.x * 0.5f;
-        orbitDistMin = orbitDist;
-        orbitDistMax = orbitDistMin * 3;*/
         SetYBounds(groundState);
+
+        audSrcMove = GameObject.Find("MovementAudio").GetComponent<AudioSource>();
+        audSrcBoost = GameObject.Find("BoostAudio").GetComponent<AudioSource>();
+        audSrcJumpUp = GameObject.Find("JumpUpAudio").GetComponent<AudioSource>();
+        audSrcJumpDown = GameObject.Find("JumpDownAudio").GetComponent<AudioSource>();
+        audSrcPortal = GameObject.Find("PortalAudio").GetComponent<AudioSource>();
+        audSrcDeath = GameObject.Find("DeathAudio").GetComponent<AudioSource>();
+        audSrcGroundColl = GameObject.Find("GroundCollisionAudio").GetComponent<AudioSource>();
     }
 	
     void FixedUpdate()
