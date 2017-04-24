@@ -9,6 +9,8 @@ public class CameraMovement : MonoBehaviour
     [SerializeField]
     float orbitAngle;
     [SerializeField]
+    float orbitSpeedLimit; // I don't think this is working.
+    [SerializeField]
     float orbitDistOffsetPlayer;
     [SerializeField]
     float orbitDistSmoothness; // Used to divide delta between player orbitDist & camera orbitDist.
@@ -68,10 +70,10 @@ public class CameraMovement : MonoBehaviour
 
         // Update position.
         float tarAng = scrPM.GetOrbitAngle(); // ORIGINAL.
-        //if (scrPM.GetGroundState() == PlayerMovement.groundStates.INNER)
-        //    tarAng = WrapValue(tarAng + 180, 360); // Player's orbitAngle adjusted by 180 degrees.
+        if (scrPM.GetGroundState() == PlayerMovement.groundStates.INNER)
+            tarAng = WrapValue(tarAng + 180, 360); // Player's orbitAngle adjusted by 180 degrees.
         float angleDelta = AngleDiff(tarAng, orbitAngle); // ORIGINAL.
-        //angleDelta = AngleDiff(playerObj.GetComponent<PlayerMovement>().GetOrbitAngle(), orbitAngle);
+        // angleDelta = AngleDiff(playerObj.GetComponent<PlayerMovement>().GetOrbitAngle(), orbitAngle);
 
 
         float orbitSpeed;
@@ -79,11 +81,12 @@ public class CameraMovement : MonoBehaviour
             orbitSpeed = angleDelta / followSmoothnessGround;
         else
             orbitSpeed = angleDelta / followSmoothnessAir;
+        Mathf.Clamp(orbitSpeed, -orbitSpeedLimit, orbitSpeedLimit);
 
         if (Mathf.Abs(angleDelta) > 1)
             orbitAngle = WrapValue(orbitAngle + orbitSpeed, 360);
         else
-            orbitAngle = playerObj.GetComponent<PlayerMovement>().GetOrbitAngle();
+            orbitAngle = tarAng; //playerObj.GetComponent<PlayerMovement>().GetOrbitAngle();
 
         transform.position = new Vector3(
             tubeTrans.position.x + lengthdir_x(orbitDist, orbitAngle),
@@ -92,7 +95,7 @@ public class CameraMovement : MonoBehaviour
 
         // Update orientation.
         transform.rotation = Quaternion.Euler(
-            transform.rotation.x, // Todo. Angle x-axis rot downward toward pipe's center or player's position.
+            transform.rotation.x,
             transform.rotation.y, 
             WrapValue(orbitAngle - 90, 360));
     }

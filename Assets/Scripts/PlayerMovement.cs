@@ -148,8 +148,17 @@ public class PlayerMovement : MonoBehaviour
     void UpdateInput()
     {
         // Check for movement input.
-        inputLeft = Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow);
-        inputRight = Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow);
+        if (groundState == groundStates.OUTER)
+        {
+            inputLeft = Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow);
+            inputRight = Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow);
+        }
+        else
+        {
+            inputLeft = Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow);
+            inputRight = Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow);
+        }
+
 
         // Check for jump input.
         inputJumpUp = Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow) || (Input.GetAxis("Mouse ScrollWheel") > 0);
@@ -289,6 +298,11 @@ public class PlayerMovement : MonoBehaviour
         // Update y-axis bounds.
         SetYBounds(_state);
 
+        // Flip orbit speed.
+            // This is to help hide the orientation &/ direction change during transition.
+        if (orbitSpeed != 0)
+            orbitSpeed = 0; //orbitSpeed = -orbitSpeed;
+
         // Flip y-axis related constants.
         velYResetMult = -velYResetMult;
         velYJump = -velYJump;
@@ -297,10 +311,10 @@ public class PlayerMovement : MonoBehaviour
         velYGravityLo = -velYGravityLo;
 
         // Accelerate player toward old ground, away from new ground.
-        velY = Mathf.Clamp(velY + velYJump * 0.5f, velYMin, velYMax);
+        velY = Mathf.Clamp(velY + velYJump * 0.4f, velYMin, velYMax);
 
         // Update camera on state-change.
-        scrCam.SetOrbitDistOffsetPlayer(scrCam.GetOrbitDistOffsetPlayer() * -1);
+        scrCam.SetOrbitDistOffsetPlayer(scrCam.GetOrbitDistOffsetPlayer() * -1); // Flip y-axis offset to opposite "side" of player.
 
         // Update state.
         groundState = _state;
