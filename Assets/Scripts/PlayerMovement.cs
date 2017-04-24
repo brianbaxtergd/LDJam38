@@ -36,19 +36,13 @@ public class PlayerMovement : MonoBehaviour
 
     bool inputLeft = false;
     bool inputRight = false;
-    bool inputJumpHold = false;
-    bool inputJumpPressed = false;
+    bool inputJumpUp = false; // Press-only.
+    bool inputJumpDown = false; // Press-only.
     bool inputBoost = false;
+    bool inputExit = false;
 
     Transform playerTrans;
     Transform tubeTrans;
-
-    public enum jumpTypes
-    {
-        SINGLE = 0,
-        BOOST,
-    }
-    jumpTypes jumpType = jumpTypes.BOOST;
 
     // Unity interface.
     void Start ()
@@ -132,11 +126,14 @@ public class PlayerMovement : MonoBehaviour
         inputRight = Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow);
 
         // Check for jump input.
-        inputJumpPressed = Input.GetMouseButtonDown(1);
-        inputJumpHold = Input.GetMouseButton(1);
+        inputJumpUp = Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow) || (Input.GetAxis("Mouse ScrollWheel") > 0);
+        inputJumpDown = Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.UpArrow) || (Input.GetAxis("Mouse ScrollWheel") < 0);
 
         // Check for boost input.
-        inputBoost = Input.GetMouseButton(0);
+        inputBoost = Input.GetKey(KeyCode.Space) || Input.GetMouseButton(0);
+
+        // Check for exit input.
+        inputExit = Input.GetKey(KeyCode.Escape);
     }
 
     void UpdateMovement()
@@ -167,39 +164,16 @@ public class PlayerMovement : MonoBehaviour
         orbitAngle = WrapValue(orbitAngle + orbitSpeed, 360);
     }
 
-    void UpdateJumpSingle()
-    {
-        // React to jump input.
-        if (GetIsGrounded())
-        {
-            if (inputJumpPressed)
-            {
-                // Add vertical velocity.
-                velY += velYJump;
-            }
-        }
-        else
-        {
-            // Apply gravity if player is floating.
-            if (inputJumpHold)
-                velY -= velYGravityLo;
-            else
-                velY -= velYGravityHi;
-        }
-        // Clamp velocity between min & max.
-        velY = Mathf.Clamp(velY, velYMin, velYMax);
-    }
-
     void UpdateJumpBoost()
     {
         // Boosting & jumping.
-        if (inputBoost || inputJumpPressed)
+        if (inputBoost || inputJumpUp || inputJumpDown)
         {
-            if (inputJumpPressed)
+            if (inputJumpUp || inputJumpDown)
             {
-                if (GetIsGrounded())
+                if (inputJumpUp && GetIsGrounded())
                     velY = Mathf.Clamp(velY + velYJump, velYMin, velYMax);
-                else
+                else if (inputJumpDown && !GetIsGrounded())
                     velY = Mathf.Clamp(velY - velYJump, velYMin, velYMax);
             }
             else if (inputBoost)
