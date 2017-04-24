@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
 {
@@ -30,28 +31,62 @@ public class GameController : MonoBehaviour
     float obstacleSpeedMax;
     float obstacleSpeed;
 
-    bool inputMenuPlay;
-    bool inputMenuExit;
+    float highScoreLevel;
+
+    bool inputMenuPlay = false;
+    bool inputMenuExit = false;
+    bool inputDeathRestart = false;
+    bool inputDeathMainMenu = false;
+
+    bool newRecord = false; // Whether or not player has reached a new highscore at death.
+
+    Text textGameState;
+    Text textLevel;
+    Text textObstacleSpeed;
+    Text textBreakTimer;
+    Text textLevelTimer;
 
     // Unity interface.
 	void Start ()
     {
-        obstacleSpeed = obstacleSpeedMin;
+        obstacleSpeed       = obstacleSpeedMin;
+        highScoreLevel      = 0;
+
+        textGameState       = GameObject.Find("GameStateText").GetComponent<Text>();
+        textLevel           = GameObject.Find("LevelText").GetComponent<Text>();
+        textObstacleSpeed   = GameObject.Find("ObstacleSpeedText").GetComponent<Text>();
+        textBreakTimer      = GameObject.Find("BreakTimerText").GetComponent<Text>();
+        textLevelTimer      = GameObject.Find("LevelTimerText").GetComponent<Text>();
+
     }
-	
+
     void FixedUpdate()
     {
         // State-machine for gameplay.
         switch (state)
         {
             case gameStates.MAIN_MENU:
+                // Switch to break-state on user input.
+                if (inputMenuPlay)
+                    SetState(gameStates.BREAK);
                 break;
             case gameStates.BREAK:
-
+                // Timer tick toward level-state.
+                breakTimer = Mathf.Max(breakTimer - Time.deltaTime, 0);
+                if (breakTimer == 0)
+                    SetState(gameStates.LEVEL);
                 break;
             case gameStates.LEVEL:
+                // Timer tick toward break-state.
+                levelTimer = Mathf.Max(levelTimer - Time.deltaTime, 0);
+                if (levelTimer == 0)
+                    SetState(gameStates.BREAK);
                 break;
             case gameStates.DEATH:
+                if (inputDeathRestart)
+                    SetState(gameStates.BREAK);
+                else if (inputDeathMainMenu)
+                    SetState(gameStates.MAIN_MENU);
                 break;
             case gameStates.PAUSE:
                 break;
@@ -63,7 +98,8 @@ public class GameController : MonoBehaviour
         // Check for user input.
         UpdateInput();
 
-
+        // Update UI.
+        UpdateUI();
 
         /*
         switch (state)
@@ -83,8 +119,19 @@ public class GameController : MonoBehaviour
     }
 
     // Public interface.
+    public float GetObstacleSpeed()
+    {
+        if (state == gameStates.DEATH || state == gameStates.PAUSE)
+            return 0.0f;
+        else
+            return obstacleSpeed;
+    }
+
     public void SetState(gameStates _state)
     {
+        // Reset misc data.
+        if (newRecord)
+            newRecord = false;
 
         switch (_state)
         {
@@ -92,18 +139,28 @@ public class GameController : MonoBehaviour
                 break;
             case gameStates.BREAK:
                 // Increase level number.
-                level += 1;
+                if (state != gameStates.DEATH)
+                    level += 1;
                 // Increase obstacle speed.
-                float newSp = (level / levelMax) * (obstacleSpeedMax - obstacleSpeedMin) + obstacleSpeedMin;
-                obstacleSpeed = Mathf.Clamp(newSp, obstacleSpeedMin, obstacleSpeedMax);
-                // Reset break timer.
-                breakTimer = 0;
+                float spInc = ((float)level / (float)levelMax) * (obstacleSpeedMax - obstacleSpeedMin);
+                //float newSp = obstacleSpeedMin + ((level / levelMax) * (obstacleSpeedMax - obstacleSpeedMin));
+                obstacleSpeed = obstacleSpeedMin + spInc;
+                //obstacleSpeed = Mathf.Clamp(newSp, obstacleSpeedMin, obstacleSpeedMax);
+                // Reset break & level timers.
+                breakTimer = breakTimerMax;
+                levelTimer = levelTimerMax;
                 break;
             case gameStates.LEVEL:
-                // Reset level timer.
-                levelTimer = 0;
                 break;
             case gameStates.DEATH:
+                // Compare score with highscore, updating when greater.
+                if (level > highScoreLevel)
+                {
+                    newRecord = true;
+                    highScoreLevel = level;
+                }
+                else
+                    newRecord = false;
                 break;
             case gameStates.PAUSE:
                 break;
@@ -113,8 +170,22 @@ public class GameController : MonoBehaviour
     }
 
     // Private interface.
+    void UpdateUI()
+    {
+        textGameState.text = "GameState: " + state.ToString();
+        textLevel.text = "Level: " + level.ToString();
+        textObstacleSpeed.text = "ObstacleSpeed: " + obstacleSpeed.ToString();
+        float bT = (1.0f - breakTimer / breakTimerMax) * 100.0f;
+        int bT_int = (int)bT;
+        textBreakTimer.text = "BreakTimer: " + bT_int.ToString() + " %";
+        float lT = (1.0f - levelTimer / levelTimerMax) * 100.0f;
+        int lT_int = (int)lT;
+        textLevelTimer.text = "LevelTimer: " + lT_int.ToString() + " %";
+    }
+
     void UpdateInput()
     {
+        // Main Menu.
         if (state == gameStates.MAIN_MENU)
         {
             inputMenuPlay =
@@ -138,5 +209,16 @@ public class GameController : MonoBehaviour
             inputMenuExit = false;
         }
 
+        // Death.
+        if (state == gameStates.DEATH)
+        {
+            inputDeathRestart = Input.GetKey(KeyCode.R);
+            inputDeathMainMenu = Input.GetKey(KeyCode.Escape);
+        }
+        else
+        {
+            inputDeathRestart = false;
+            inputDeathMainMenu = false;
+        }
     }
 }
