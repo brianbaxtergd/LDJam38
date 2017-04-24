@@ -46,6 +46,14 @@ public class GameController : MonoBehaviour
     Text textBreakTimer;
     Text textLevelTimer;
 
+    AudioSource audSrcMove;
+    AudioSource audSrcBoost;
+    AudioSource audSrcJumpUp;
+    AudioSource audSrcJumpDown;
+    AudioSource audSrcPortal;
+    AudioSource audSrcDeath;
+    AudioSource audSrcGroundColl;
+
     // Unity interface.
 	void Start ()
     {
@@ -57,6 +65,14 @@ public class GameController : MonoBehaviour
         textObstacleSpeed   = GameObject.Find("ObstacleSpeedText").GetComponent<Text>();
         textBreakTimer      = GameObject.Find("BreakTimerText").GetComponent<Text>();
         textLevelTimer      = GameObject.Find("LevelTimerText").GetComponent<Text>();
+
+        audSrcMove          = GameObject.Find("MovementAudio").GetComponent<AudioSource>();
+        audSrcBoost         = GameObject.Find("BoostAudio").GetComponent<AudioSource>();
+        audSrcJumpUp        = GameObject.Find("JumpUpAudio").GetComponent<AudioSource>();
+        audSrcJumpDown      = GameObject.Find("JumpDownAudio").GetComponent<AudioSource>();
+        audSrcPortal        = GameObject.Find("PortalAudio").GetComponent<AudioSource>();
+        audSrcDeath         = GameObject.Find("DeathAudio").GetComponent<AudioSource>();
+        audSrcGroundColl    = GameObject.Find("GroundCollisionAudio").GetComponent<AudioSource>();
     }
 
     void FixedUpdate()
