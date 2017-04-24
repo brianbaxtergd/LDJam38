@@ -164,8 +164,8 @@ public class GameController : MonoBehaviour
                 break;
 		case gameStates.BREAK:
                 // Increase level number.
-			if(state != gameStates.DEATH)
-				level += 1;
+				if(state != gameStates.DEATH)
+					level += 1;
                 // Increase obstacle speed.
 				float ratio = (float)level / (float)levelMax;
 				float newSp = obstacleSpeedMin + (ratio * (obstacleSpeedMax - obstacleSpeedMin));
@@ -174,9 +174,10 @@ public class GameController : MonoBehaviour
 				SpawnerGod.SetObstacleSpawnRate(new Vector2(1.2f - ratio, 3.0f - ratio));
 				SpawnerGod.SetOpenSpots((int)(1 - ratio) * 4);
 				SpawnerGod.SetPowerUpPercentage(1.1f - ratio * 0.10f);
-                // Reset break & level timers.
-                breakTimer = breakTimerMax;
-                levelTimer = levelTimerMax;
+            	    // Reset break & level timers.
+				breakTimer = breakTimerMax;
+				levelTimer = levelTimerMax;
+				SpawnerGod.Pause(breakTimer);
                 break;
             case gameStates.LEVEL:
                 break;
