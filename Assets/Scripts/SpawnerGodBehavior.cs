@@ -11,16 +11,6 @@ public class SpawnerGodBehavior : MonoBehaviour
 	[SerializeField]
 	GameObject[] Obstacles = null;
 	[SerializeField]
-	GameObject[] Rings = null;
-	[SerializeField]
-	float RingSpawnRate = 6.0f;
-	[SerializeField]
-	GameObject[] PowerUps = null;
-	[SerializeField]
-	float PercentageOfPowerUp = 35.0f;
-	[SerializeField]
-	GameObject Hole = null;
-	[SerializeField]
 	float ObstacleSpeed = 10.0f;
 	[SerializeField]
 	Vector3 Direction = Vector3.zero;
@@ -32,6 +22,20 @@ public class SpawnerGodBehavior : MonoBehaviour
 	Vector2 MinSpawnRate = Vector2.zero;//the minimum spawn rate
 	[SerializeField]
 	int NumOfAlwaysOpenSpots = 2;
+	[SerializeField]
+	Vector2 PatternMinMaxRate = Vector2.zero;
+	[SerializeField]
+	GameObject[] Rings = null;
+	[SerializeField]
+	float RingSpawnRate = 6.0f;
+	[SerializeField]
+	GameObject[] PowerUps = null;
+	[SerializeField]
+	float PercentageOfPowerUp = 35.0f;
+	[SerializeField]
+	GameObject Hole = null;
+
+	const int NumPatters = 1;
 
 	float[] SpawnRates = null;
 	float[] Timers = null;
@@ -39,6 +43,9 @@ public class SpawnerGodBehavior : MonoBehaviour
 	float RingTimer = 0;
 	int NumOfSpawns = 0;
 	int Spawn = 0;
+	float PatternTimer = 0;
+
+	bool doingPattern = false;
 
 	void Start()
 	{
@@ -56,6 +63,8 @@ public class SpawnerGodBehavior : MonoBehaviour
 
 	void Update ()
 	{
+		if(doingPattern)
+			return;
 		if(MoreOverTime)
 		{
 			if(SpawnRateRange.y >= MinSpawnRate.y)
@@ -63,11 +72,27 @@ public class SpawnerGodBehavior : MonoBehaviour
 			if(SpawnRateRange.x >= MinSpawnRate.x)
 				SpawnRateRange.x -= Time.deltaTime * 0.0065f;
 		}
+
 		SpawnRing();
-		SpawnCheck();
+		SpawnObstacles();
+
+		PatternTimer -= Time.deltaTime;
+		if(PatternTimer <= 0)
+		{
+			int pat = Random.Range(1, NumPatters);
+			switch(pat)
+			{
+			case 1://CorkScrew
+				StartCoroutine(Corkscrew());
+				break;
+			default:
+				break;
+			}
+			PatternTimer = Random.Range(PatternMinMaxRate.x, PatternMinMaxRate.y);
+		}
 	}
 
-	void SpawnCheck()
+	void SpawnObstacles()
 	{
 		int currNumOpen = 0;
 		for(int i = 0; i < NumOfSpawns; ++ i)
@@ -116,6 +141,30 @@ public class SpawnerGodBehavior : MonoBehaviour
 		}
 	}
 
+	IEnumerator Corkscrew()
+	{
+		doingPattern = true;
+		int numberOfSpawns = Random.Range(NumOfSpawns, NumOfSpawns * 5);
+		int direction = Random.Range(0,3);
+		if(direction < 2)
+			direction = -1;
+		else
+			direction = 1;
+		int angle = Random.Range(0, Angles.Length - 1);
+		for(int i = 0; i < numberOfSpawns; ++i)
+		{
+			transform.rotation = Quaternion.Euler(0, 0, Angles[angle]);
+			InnerOuterSpawns[Spawn].SpawnObstacle(Obstacles[0], ObstacleSpeed, Direction);
+			angle += direction;
+			if(angle < 0)
+				angle = Angles.Length - 1;
+			else if(angle >= Angles.Length)
+				angle = 0;
+			yield return new WaitForSeconds(SpawnRateRange.x * 0.5f);
+		}
+		doingPattern = false;
+	}
+
 	public void SetOpenSpots(int spots)
 	{
 		NumOfAlwaysOpenSpots = spots;
@@ -129,8 +178,7 @@ public class SpawnerGodBehavior : MonoBehaviour
 	public void SetRingSpawnRate(float rate)
 	{
 		RingSpawnRate = rate;
-	}
-
+  	}
 	//0 is inner 1 is outer
 	public void SetIOState(int state)
 	{
