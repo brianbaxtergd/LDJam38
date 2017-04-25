@@ -193,6 +193,8 @@ public class GameController : MonoBehaviour
                 audSrcMenuMusic.Play();
                 break;
 		case gameStates.BREAK:
+                // Revive player.
+                GameObject.Find("Player").GetComponent<PlayerMovement>().SetIsDead(false);
                 // Play music.
                 audSrcBreakMusic.Play();
                 // Increase level number.

@@ -44,6 +44,7 @@ public class PlayerMovement : MonoBehaviour
     Transform playerTrans;
     Transform tubeTrans;
     CameraMovement scrCam;
+    GameController scrGameCon;
 
     public enum groundStates
     {
@@ -65,12 +66,15 @@ public class PlayerMovement : MonoBehaviour
     AudioSource audSrcDeath;
     AudioSource audSrcGroundColl;
 
+    bool isDead = false;
+
     // Unity interface.
     void Start ()
     {
         playerTrans = GameObject.Find("Sphere").gameObject.transform;
         tubeTrans = GameObject.Find("Tube").gameObject.transform;
         scrCam = GameObject.Find("Main Camera").gameObject.GetComponent<CameraMovement>();
+        scrGameCon = GameObject.Find("Game").gameObject.GetComponent<GameController>();
 
         SetYBounds(groundState);
 
@@ -270,6 +274,15 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    void OnTriggerEnter(Collider other)
+    {
+        if (!isDead)
+        {
+            isDead = true;
+            scrGameCon.SetState(GameController.gameStates.DEATH);
+        }
+    }
+
     void CheckCollisions()
     {
         // Portals.
@@ -290,8 +303,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
         // Obstacles.
-        /*
-        */
+        
 
         // Power ups.
         /*
@@ -355,5 +367,15 @@ public class PlayerMovement : MonoBehaviour
             default:
                 break;
         }
+    }
+
+    public void SetIsDead(bool _val)
+    {
+        isDead = _val;
+    }
+
+    bool GetIsDead()
+    {
+        return isDead;
     }
 }
