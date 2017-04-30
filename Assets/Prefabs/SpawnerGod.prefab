@@ -95,7 +95,7 @@ Transform:
   m_GameObject: {fileID: 1929018068369982}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.16, y: 0.16, z: 0.16}
   m_Children: []
   m_Father: {fileID: 4235799640327002}
   m_RootOrder: 0
@@ -122,10 +122,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ca100fda79c1db44a0c2e465ab6b7f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Obstacles:
-  - {fileID: 1247072842200592, guid: 1e6ff109789d1fb48a7219628ddf96cf, type: 2}
-  - {fileID: 0}
-  spawnRate: 1
+  InnerOuterSpawns:
+  - {fileID: 114391416940134828}
+  - {fileID: 114790409711670498}
+  AngleDiff: 40
+  EightFence:
+  - {fileID: 1714971198845412, guid: 6ada1d60d489e34478ca3771f68c0659, type: 2}
+  - {fileID: 1870955653970766, guid: b7e288878a0af1e43892a24d3ddf7593, type: 2}
+  QuarterFence:
+  - {fileID: 1751744917121660, guid: 2c3adea43b5784f49b4d3e58d87d5899, type: 2}
+  - {fileID: 1797946559694076, guid: 4240c6b6e7734fc4cb918b13ce03d2d2, type: 2}
+  HalfFence:
+  - {fileID: 1307892324252292, guid: 311587b224f005541bcd366ac05c51e2, type: 2}
+  - {fileID: 1433513175200654, guid: 6315289d37766094ea61a8afd1bc835c, type: 2}
+  ComboFences:
+  - {fileID: 1660328318285466, guid: 964faabb6db3bce43a81f81967f9e876, type: 2}
+  - {fileID: 1671706087581826, guid: 65c441187ec672b48a386af04a0128d5, type: 2}
+  ComboFenceSpawnRate: 10
+  FullFence: {fileID: 0}
+  ObstacleSpeed: 10
+  Direction: {x: 0, y: 0, z: -1}
+  SpawnRateRange: {x: 10, y: 15}
+  MoreOverTime: 0
+  MinSpawnRate: {x: 0, y: 0}
+  NumOfAlwaysOpenSpots: 4
+  PatternMinMaxRate: {x: 6.3, y: 12.5}
+  PowerUps: []
+  PercentageOfPowerUp: 0
+  Hole: {fileID: 1610620814843134, guid: cd6edc136ae178b43a14ce6074e32cda, type: 2}
 --- !u!114 &114790409711670498
 MonoBehaviour:
   m_ObjectHideFlags: 1

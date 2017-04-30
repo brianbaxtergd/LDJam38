@@ -95,6 +95,8 @@ public class GameController : MonoBehaviour
                 // Switch to break-state on user input.
                 if (inputMenuPlay)
                     SetState(gameStates.BREAK);
+                else if (inputMenuExit)
+                    Application.Quit();
                 break;
             case gameStates.BREAK:
                 // Timer tick toward level-state.

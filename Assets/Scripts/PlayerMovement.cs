@@ -95,6 +95,10 @@ public class PlayerMovement : MonoBehaviour
     {
         // Update user input.
         UpdateInput();
+
+        if (inputExit)
+            Application.Quit();
+
         // React to input.
         UpdateMovement();
         UpdateJumpBoost();
@@ -183,6 +187,10 @@ public class PlayerMovement : MonoBehaviour
 
         // Check for boost input.
         inputBoost = Input.GetKey(KeyCode.Space) || Input.GetMouseButton(0);
+        if (inputBoost)
+            audSrcBoost.Play();
+        else
+            audSrcBoost.Stop();
 
         // Check for exit input.
         inputExit = Input.GetKey(KeyCode.Escape);
@@ -242,6 +250,9 @@ public class PlayerMovement : MonoBehaviour
 
         if (isChangingGroundStates)
         {
+            if (!audSrcPortal.isPlaying)
+                audSrcPortal.Play();
+
             // Current state represents the state we're transitioning INTO, not out of.
             switch(groundState)
             {
