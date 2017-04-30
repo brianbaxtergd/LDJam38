@@ -9,15 +9,13 @@ public class CameraMovement : MonoBehaviour
     [SerializeField]
     float orbitAngle;
     [SerializeField]
-    float orbitSpeedLimit; // I don't think this is working.
-    [SerializeField]
     float orbitDistOffsetPlayer;
     [SerializeField]
     float orbitDistSmoothness; // Used to divide delta between player orbitDist & camera orbitDist.
     [SerializeField]
-    float followSmoothnessGround;
+    float followSmoothnessGround; // Angular.
     [SerializeField]
-    float followSmoothnessAir;
+    float followSmoothnessAir; // Angular.
     [SerializeField]
     float followDistZ;
     [SerializeField]
@@ -81,12 +79,11 @@ public class CameraMovement : MonoBehaviour
             orbitSpeed = angleDelta / followSmoothnessGround;
         else
             orbitSpeed = angleDelta / followSmoothnessAir;
-        Mathf.Clamp(orbitSpeed, -orbitSpeedLimit, orbitSpeedLimit);
 
         if (Mathf.Abs(angleDelta) > 1)
             orbitAngle = WrapValue(orbitAngle + orbitSpeed, 360);
         else
-            orbitAngle = tarAng; //playerObj.GetComponent<PlayerMovement>().GetOrbitAngle();
+            orbitAngle = tarAng;
 
         transform.position = new Vector3(
             tubeTrans.position.x + lengthdir_x(orbitDist, orbitAngle),

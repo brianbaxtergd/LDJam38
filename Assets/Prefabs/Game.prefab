@@ -1153,9 +1153,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   level: 0
   levelMax: 8
-  breakTimerMax: 2
-  levelTimerMax: 3
   obstacleSpeedMin: 10
-  obstacleSpeedMax: 50
+  obstacleSpeedMax: 40
   barCountBreak: 1
   barCountLevel: 1
+  SpawnerGod: {fileID: 0}

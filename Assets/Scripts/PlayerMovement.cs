@@ -33,6 +33,7 @@ public class PlayerMovement : MonoBehaviour
     float orbitDist;
     float orbitDistMin;
     float orbitDistMax;
+    float prevOrbitDist;
 
     bool inputLeft = false;
     bool inputRight = false;
@@ -77,6 +78,8 @@ public class PlayerMovement : MonoBehaviour
         scrGameCon = GameObject.Find("Game").gameObject.GetComponent<GameController>();
 
         SetYBounds(groundState);
+        orbitDist = orbitDistMin;
+        prevOrbitDist = orbitDist;
 
         audSrcMove = GameObject.Find("MovementAudio").GetComponent<AudioSource>();
         audSrcBoost = GameObject.Find("BoostAudio").GetComponent<AudioSource>();
@@ -180,24 +183,12 @@ public class PlayerMovement : MonoBehaviour
             inputRight = Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow);
         }
 
-
         // Check for jump input.
         inputJumpUp = Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow) || (Input.GetAxis("Mouse ScrollWheel") > 0);
         inputJumpDown = Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.UpArrow) || (Input.GetAxis("Mouse ScrollWheel") < 0);
 
         // Check for boost input.
         inputBoost = Input.GetKey(KeyCode.Space) || Input.GetMouseButton(0);
-        if (inputBoost)
-        {
-            if (!audSrcBoost.isPlaying)
-                audSrcBoost.Play();
-
-        }
-        else
-        {
-            if (audSrcBoost.isPlaying)
-                audSrcBoost.Stop();
-        }
 
         // Check for exit input.
         inputExit = Input.GetKey(KeyCode.Escape);
@@ -233,26 +224,45 @@ public class PlayerMovement : MonoBehaviour
 
     void UpdateJumpBoost()
     {
+        // Update prev(s).
+        prevOrbitDist = orbitDist;
+
         // Boosting & jumping.
-        if (inputBoost || inputJumpUp || inputJumpDown)
+        if (inputJumpUp || inputJumpDown)
         {
-            if (inputJumpUp || inputJumpDown)
+            if (inputJumpUp && GetIsGrounded())
             {
-                if (inputJumpUp && GetIsGrounded())
-                    velY = Mathf.Clamp(velY + velYJump, velYMin, velYMax);
-                else if (inputJumpDown && !GetIsGrounded())
-                    velY = Mathf.Clamp(velY - velYJump, velYMin, velYMax);
+                velY = Mathf.Clamp(velY + velYJump, velYMin, velYMax);
+                // Play jumpUp audio.
+                if (audSrcJumpDown.isPlaying)
+                    audSrcJumpDown.Stop();
+                audSrcJumpUp.PlayOneShot(audSrcJumpUp.clip);
             }
-            else if (inputBoost)
+            else if (inputJumpDown && !GetIsGrounded())
             {
-                if (velY < velYBoost * velYResetMult)
-                    velY = velYBoost * velYResetMult;
-                velY = Mathf.Clamp(velY + velYBoost, velYMin, velYMax);
+                velY = Mathf.Clamp(velY - velYJump, velYMin, velYMax);
+                // Play jumpDown audio.
+                if (audSrcJumpUp.isPlaying)
+                    audSrcJumpUp.Stop();
+                audSrcJumpDown.PlayOneShot(audSrcJumpDown.clip);
             }
+        }
+        else if (inputBoost)
+        {
+            if (velY < velYBoost * velYResetMult)
+                velY = velYBoost * velYResetMult;
+            velY = Mathf.Clamp(velY + velYBoost, velYMin, velYMax);
+            // Play boost audio.
+            if (!audSrcBoost.isPlaying)
+                audSrcBoost.Play();
         }
         else
         {
+            // Apply gravity to velY.
             velY = Mathf.Clamp(velY - velYGravityHi, velYMin, velYMax);
+            // Stop boost audio.
+            if (audSrcBoost.isPlaying)
+                audSrcBoost.Stop();
         }
 
         if (isChangingGroundStates)
@@ -287,7 +297,12 @@ public class PlayerMovement : MonoBehaviour
             {
                 // Kill velY on landing.
                 if (velY != 0)
+                {
                     velY = 0;
+                    // TODO: Ground/ceiling collision audio.
+                    //if (!audSrcGroundColl.isPlaying && orbitDist != prevOrbitDist)
+                        //audSrcGroundColl.PlayOneShot(audSrcGroundColl.clip);
+                }
             }
         }
     }
