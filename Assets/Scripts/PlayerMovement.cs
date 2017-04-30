@@ -188,9 +188,16 @@ public class PlayerMovement : MonoBehaviour
         // Check for boost input.
         inputBoost = Input.GetKey(KeyCode.Space) || Input.GetMouseButton(0);
         if (inputBoost)
-            audSrcBoost.Play();
+        {
+            if (!audSrcBoost.isPlaying)
+                audSrcBoost.Play();
+
+        }
         else
-            audSrcBoost.Stop();
+        {
+            if (audSrcBoost.isPlaying)
+                audSrcBoost.Stop();
+        }
 
         // Check for exit input.
         inputExit = Input.GetKey(KeyCode.Escape);
